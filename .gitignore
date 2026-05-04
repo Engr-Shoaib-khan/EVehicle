@@ -1,6 +1,8 @@
 # Node
 backend/node_modules/
 backend/.env
+backend/logs/
+backend/uploads/
 
 # Flutter
 ev_ride_app/.dart_tool/

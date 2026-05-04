@@ -1,10 +1,13 @@
 const request = require('supertest');
-const { app } = require('../server');
+const app = require('../app'); // Directly import app
 const dbHandler = require('./setup');
 const User = require('../models/User');
 const Ride = require('../models/Ride');
 
-beforeAll(async () => await dbHandler.connect());
+beforeAll(async () => {
+  await dbHandler.connect();
+  dbHandler.mockIo(app); // Inject mock IO
+});
 afterEach(async () => await dbHandler.clearDatabase());
 afterAll(async () => await dbHandler.closeDatabase());
 

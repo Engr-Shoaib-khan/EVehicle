@@ -37,3 +37,6 @@
 {"level":"info","message":"[CRON] All 5 background jobs started.","service":"ev-ride-api","timestamp":"2026-05-04 02:22:07"}
 {"activeRides":0,"level":"info","message":"[CRON] Platform stats","onlineDrivers":0,"service":"ev-ride-api","timestamp":"2026-05-04 03:00:01","todayCompleted":0}
 {"level":"info","message":"[KYC] User Test Driver uploaded documents for verification.","service":"ev-ride-api","timestamp":"2026-05-05 02:07:42"}
+{"level":"info","message":"[KYC] User Test Driver uploaded documents for verification.","service":"ev-ride-api","timestamp":"2026-05-05 02:54:18"}
+{"level":"info","message":"[KYC] User Test Driver uploaded documents for verification.","service":"ev-ride-api","timestamp":"2026-05-05 03:01:22"}
+{"level":"info","message":"[KYC] User Test Driver uploaded documents for verification.","service":"ev-ride-api","timestamp":"2026-05-05 03:02:07"}

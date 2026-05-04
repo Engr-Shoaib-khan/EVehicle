@@ -22,3 +22,19 @@ module.exports.clearDatabase = async () => {
     await collection.deleteMany();
   }
 };
+
+// Mock Socket.io for testing
+module.exports.mockIo = (app) => {
+  const mockIo = {
+    to: jest.fn().mockReturnThis(),
+    emit: jest.fn().mockReturnThis(),
+    on: jest.fn(),
+    sockets: {
+      adapter: {
+        rooms: new Map()
+      }
+    }
+  };
+  app.set("io", mockIo);
+  return mockIo;
+};

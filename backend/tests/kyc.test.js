@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app } = require('../server');
+const app = require('../app'); // Directly import app
 const dbHandler = require('./setup');
 const User = require('../models/User');
 const path = require('path');
@@ -7,6 +7,7 @@ const fs = require('fs');
 
 beforeAll(async () => {
   await dbHandler.connect();
+  dbHandler.mockIo(app); // Inject mock IO
   // Ensure uploads/kyc exists for tests
   const dir = path.join(__dirname, '../uploads/kyc');
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

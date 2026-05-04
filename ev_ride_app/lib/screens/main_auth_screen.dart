@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../core/constants.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
@@ -29,7 +30,7 @@ class MainAuthScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: kGreen.withOpacity(0.2), blurRadius: 30, offset: const Offset(0, 10))],
+                    boxShadow: [BoxShadow(color: kGreen.withValues(alpha: 0.2), blurRadius: 30, offset: const Offset(0, 10))],
                   ),
                   child: Center(child: Icon(Icons.electric_bolt_rounded, size: 60.sp, color: kGreen)),
                 ),

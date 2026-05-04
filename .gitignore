@@ -1,0 +1,19 @@
+# Node
+backend/node_modules/
+backend/.env
+
+# Flutter
+ev_ride_app/.dart_tool/
+ev_ride_app/.packages
+ev_ride_app/.pub-cache/
+ev_ride_app/.flutter-plugins
+ev_ride_app/.flutter-plugins-dependencies
+ev_ride_app/build/
+ev_ride_app/.idea/
+ev_ride_app/android/local.properties
+ev_ride_app/ios/Pods/
+ev_ride_app/ios/.symlinks/
+ev_ride_app/linux/flutter/ephemeral/
+ev_ride_app/macos/Flutter/ephemeral/
+ev_ride_app/windows/flutter/ephemeral/
+ev_ride_app/.env

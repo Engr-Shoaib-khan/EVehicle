@@ -1,0 +1,35 @@
+service: ev-ride-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1 # Change to your preferred region
+  stage: prod
+  memorySize: 512
+  timeout: 30
+  environment:
+    NODE_ENV: production
+    MONGO_URI: ${env:MONGO_URI}
+    JWT_SECRET: ${env:JWT_SECRET}
+    GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+    # Add other env vars as needed
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+
+plugins:
+  - serverless-offline # For local testing
+
+custom:
+  serverless-offline:
+    httpPort: 5000

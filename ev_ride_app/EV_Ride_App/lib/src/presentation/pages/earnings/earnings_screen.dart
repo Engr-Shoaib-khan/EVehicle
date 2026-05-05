@@ -29,7 +29,8 @@ class _EarningsScreenState extends State<EarningsScreen> {
   Future<void> _fetchEarnings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token'); // Ya kTokenKey use karein agar constants mein hai
+      final token = prefs.getString(
+          'token'); // Ya kTokenKey use karein agar constants mein hai
 
       final response = await http.get(
         Uri.parse('$kBaseUrl/api/earnings/summary'),
@@ -54,29 +55,32 @@ class _EarningsScreenState extends State<EarningsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Earnings', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text('Earnings',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
-      body: _isLoading 
-        ? const Center(child: CircularProgressIndicator(color: kGreen))
-        : RefreshIndicator(
-            onRefresh: _fetchEarnings,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildBalanceCard(),
-                  const SizedBox(height: 25),
-                  const Text("Statistics", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 15),
-                  _buildStatsGrid(),
-                ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: kGreen))
+          : RefreshIndicator(
+              onRefresh: _fetchEarnings,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBalanceCard(),
+                    const SizedBox(height: 25),
+                    const Text("Statistics",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 15),
+                    _buildStatsGrid(),
+                  ],
+                ),
               ),
             ),
-          ),
     );
   }
 
@@ -87,26 +91,36 @@ class _EarningsScreenState extends State<EarningsScreen> {
       decoration: BoxDecoration(
         gradient: const LinearGradient(colors: [kGreen, kGreenDark]),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: kGreen.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+        boxShadow: [
+          BoxShadow(
+              color: kGreen.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 5))
+        ],
       ),
       child: Column(
         children: [
-          const Text("Pending Payout", style: TextStyle(color: Colors.white70, fontSize: 16)),
+          const Text("Pending Payout",
+              style: TextStyle(color: Colors.white70, fontSize: 16)),
           const SizedBox(height: 10),
-          Text("RS ${_summary['pendingPayout']}", 
-            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+          Text("RS ${_summary['pendingPayout']}",
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               // Payout Request Logic
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: kGreen,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              minimumSize: const Size(150, 45)
-            ),
-            child: const Text("Withdraw Money", style: TextStyle(fontWeight: FontWeight.bold)),
+                backgroundColor: Colors.white,
+                foregroundColor: kGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                minimumSize: const Size(150, 45)),
+            child: const Text("Withdraw Money",
+                style: TextStyle(fontWeight: FontWeight.bold)),
           )
         ],
       ),
@@ -122,10 +136,14 @@ class _EarningsScreenState extends State<EarningsScreen> {
       mainAxisSpacing: 15,
       childAspectRatio: 1.2,
       children: [
-        _statsTile("Today's Rides", "${_summary['today']['rides']}", Icons.directions_car, Colors.blue),
-        _statsTile("Today's Income", "RS ${_summary['today']['earned']}", Icons.account_balance_wallet, Colors.orange),
-        _statsTile("Weekly Rides", "${_summary['week']['rides']}", Icons.history, Colors.purple),
-        _statsTile("Weekly Income", "RS ${_summary['week']['earned']}", Icons.trending_up, Colors.teal),
+        _statsTile("Today's Rides", "${_summary['today']['rides']}",
+            Icons.directions_car, Colors.blue),
+        _statsTile("Today's Income", "RS ${_summary['today']['earned']}",
+            Icons.account_balance_wallet, Colors.orange),
+        _statsTile("Weekly Rides", "${_summary['week']['rides']}",
+            Icons.history, Colors.purple),
+        _statsTile("Weekly Income", "RS ${_summary['week']['earned']}",
+            Icons.trending_up, Colors.teal),
       ],
     );
   }
@@ -143,7 +161,9 @@ class _EarningsScreenState extends State<EarningsScreen> {
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 10),
-          Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(value,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Text(title, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),

@@ -21,18 +21,23 @@ class _RideNavigationScreenState extends State<RideNavigationScreen> {
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(widget.rideData['pickup']['lat'], widget.rideData['pickup']['lng']),
+              target: LatLng(widget.rideData['pickup']['lat'],
+                  widget.rideData['pickup']['lng']),
               zoom: 14,
             ),
-            onMapCreated: (GoogleMapController controller) => _controller.complete(controller),
+            onMapCreated: (GoogleMapController controller) =>
+                _controller.complete(controller),
             myLocationEnabled: true,
           ),
           Positioned(
-            bottom: 20, left: 20, right: 20,
+            bottom: 20,
+            left: 20,
+            right: 20,
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(15),
-                child: Text("Customer: ${widget.rideData['userName']}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: Text("Customer: ${widget.rideData['userName']}",
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           )

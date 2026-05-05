@@ -31,11 +31,13 @@ class _RatingScreenState extends State<RatingScreen> {
     setState(() => _submitting = true);
     // In a real app, call an API here
     await Future.delayed(const Duration(seconds: 1));
-    
+
     if (mounted) {
       Navigator.of(context).popUntil((route) => route.isFirst);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Thank you for your feedback!'), backgroundColor: kGreen),
+        const SnackBar(
+            content: Text('Thank you for your feedback!'),
+            backgroundColor: kGreen),
       );
     }
   }
@@ -81,7 +83,8 @@ class _RatingScreenState extends State<RatingScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Add a comment (optional)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 40),
@@ -92,15 +95,21 @@ class _RatingScreenState extends State<RatingScreen> {
                 onPressed: _submitting ? null : _submit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kGreen,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 child: _submitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Submit Feedback', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                    : const Text('Submit Feedback',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
               ),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+              onPressed: () =>
+                  Navigator.of(context).popUntil((route) => route.isFirst),
               child: const Text('Skip', style: TextStyle(color: Colors.grey)),
             ),
           ],

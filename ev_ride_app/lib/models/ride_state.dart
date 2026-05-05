@@ -28,13 +28,13 @@ class DriverInfo {
 }
 
 // ── Ride Status Enum ─────────────────────────────────────────────
-enum RideStatus { 
-  idle,           
-  searching,      
-  driverAssigned, 
-  inProgress,     
-  completed,      
-  cancelled       
+enum RideStatus {
+  idle,
+  searching,
+  driverAssigned,
+  inProgress,
+  completed,
+  cancelled
 }
 
 // ── Ride State Model ─────────────────────────────────────────────

@@ -13,20 +13,20 @@ class _WalletScreenState extends State<WalletScreen>
   final PaymentService _paymentService = PaymentService();
   late final TabController _tabs;
 
-  double   _balance      = 0.0;
-  bool     _loadingWallet = true;
-  bool     _topUpLoading  = false;
-  List<dynamic> _txns    = [];
+  double _balance = 0.0;
+  bool _loadingWallet = true;
+  bool _topUpLoading = false;
+  List<dynamic> _txns = [];
 
-  String   _selectedMethod = 'card';
+  String _selectedMethod = 'card';
   final _customCtrl = TextEditingController();
 
-  static const List<int>    _presets = [200, 500, 1000, 2000, 5000];
+  static const List<int> _presets = [200, 500, 1000, 2000, 5000];
   static const List<Map<String, dynamic>> _methods = [
-    {'id': 'card',       'label': 'Card',       'emoji': '💳'},
-    {'id': 'easypaisa',  'label': 'EasyPaisa',  'emoji': '🟠'},
-    {'id': 'jazzcash',   'label': 'JazzCash',   'emoji': '🔴'},
-    {'id': 'bank',       'label': 'Bank',        'emoji': '🏦'},
+    {'id': 'card', 'label': 'Card', 'emoji': '💳'},
+    {'id': 'easypaisa', 'label': 'EasyPaisa', 'emoji': '🟠'},
+    {'id': 'jazzcash', 'label': 'JazzCash', 'emoji': '🔴'},
+    {'id': 'bank', 'label': 'Bank', 'emoji': '🏦'},
   ];
 
   @override
@@ -44,7 +44,9 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Future<void> _fetchWallet() async {
-    setState(() { _loadingWallet = true; });
+    setState(() {
+      _loadingWallet = true;
+    });
     try {
       final result = await _paymentService.getWalletDetails();
 
@@ -53,7 +55,7 @@ class _WalletScreenState extends State<WalletScreen>
         setState(() {
           _balance = (d['walletBalance'] as num).toDouble();
         });
-        
+
         final txnResult = await _paymentService.getTransactions();
         if (txnResult['success'] == true) {
           setState(() => _txns = (txnResult['data'] as List? ?? []));
@@ -61,11 +63,11 @@ class _WalletScreenState extends State<WalletScreen>
       } else {
         // Handle error if needed
       }
-      } catch (e) {
+    } catch (e) {
       // Handle exception if needed
-      } finally {
+    } finally {
       if (mounted) setState(() => _loadingWallet = false);
-      }
+    }
   }
 
   Future<void> _topUp(int amount) async {
@@ -100,23 +102,38 @@ class _WalletScreenState extends State<WalletScreen>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         title: const Text('Confirm Top-Up',
             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
-        content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _confirmRow('Amount',  'Rs. $amount'),
-          const SizedBox(height: 6.0),
-          _confirmRow('Method',  _methods.firstWhere((m) => m['id'] == _selectedMethod)['label'] as String),
-          const SizedBox(height: 6.0),
-          _confirmRow('New Balance', 'Rs. ${(_balance + amount).toStringAsFixed(0)}'),
-        ]),
+        content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _confirmRow('Amount', 'Rs. $amount'),
+              const SizedBox(height: 6.0),
+              _confirmRow(
+                  'Method',
+                  _methods.firstWhere(
+                      (m) => m['id'] == _selectedMethod)['label'] as String),
+              const SizedBox(height: 6.0),
+              _confirmRow('New Balance',
+                  'Rs. ${(_balance + amount).toStringAsFixed(0)}'),
+            ]),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
-            onPressed: () { Navigator.pop(context); _topUp(amount); },
+            onPressed: () {
+              Navigator.pop(context);
+              _topUp(amount);
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: kGreen, foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
+                backgroundColor: kGreen,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0))),
             child: const Text('Confirm'),
           ),
         ],
@@ -125,9 +142,14 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Widget _confirmRow(String label, String val) => Row(children: [
-    Text('$label: ', style: const TextStyle(fontSize: 13.0, color: Color(0xFF6B7280))),
-    Text(val, style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w700, color: Color(0xFF0D1B2A))),
-  ]);
+        Text('$label: ',
+            style: const TextStyle(fontSize: 13.0, color: Color(0xFF6B7280))),
+        Text(val,
+            style: const TextStyle(
+                fontSize: 13.0,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0D1B2A))),
+      ]);
 
   void _showSnack(String msg, {required bool isSuccess}) {
     if (!mounted) return;
@@ -144,7 +166,8 @@ class _WalletScreenState extends State<WalletScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('My Wallet', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('My Wallet',
+            style: TextStyle(fontWeight: FontWeight.w700)),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -170,7 +193,8 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Widget _buildTopUpTab() {
-    if (_loadingWallet) return const Center(child: CircularProgressIndicator(color: kGreen));
+    if (_loadingWallet)
+      return const Center(child: CircularProgressIndicator(color: kGreen));
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -178,13 +202,15 @@ class _WalletScreenState extends State<WalletScreen>
         children: [
           _buildBalanceCard(),
           const SizedBox(height: 30.0),
-          const Text('Select Amount', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
+          const Text('Select Amount',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
           const SizedBox(height: 15.0),
           _buildPresetsGrid(),
           const SizedBox(height: 20.0),
           _buildCustomAmountInput(),
           const SizedBox(height: 30.0),
-          const Text('Select Payment Method', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
+          const Text('Select Payment Method',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
           const SizedBox(height: 15.0),
           _buildPaymentMethods(),
           const SizedBox(height: 40.0),
@@ -196,11 +222,14 @@ class _WalletScreenState extends State<WalletScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: kGreen,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0)),
               ),
               child: _topUpLoading
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Top Up Now', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
+                  : const Text('Top Up Now',
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.w700)),
             ),
           ),
         ],
@@ -213,17 +242,27 @@ class _WalletScreenState extends State<WalletScreen>
       width: double.infinity,
       padding: const EdgeInsets.all(25.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [kGreen, kGreen.withValues(alpha: 0.8)]),
+        gradient:
+            LinearGradient(colors: [kGreen, kGreen.withValues(alpha: 0.8)]),
         borderRadius: BorderRadius.circular(25.0),
-        boxShadow: [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+              color: kGreen.withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Available Balance', style: TextStyle(color: Colors.white70, fontSize: 14.0)),
+          const Text('Available Balance',
+              style: TextStyle(color: Colors.white70, fontSize: 14.0)),
           const SizedBox(height: 10.0),
           Text('Rs. ${_balance.toStringAsFixed(2)}',
-              style: const TextStyle(color: Colors.white, fontSize: 32.0, fontWeight: FontWeight.w800)),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.w800)),
         ],
       ),
     );
@@ -250,7 +289,8 @@ class _WalletScreenState extends State<WalletScreen>
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(12.0),
             ),
-            child: Text('Rs. $amt', style: const TextStyle(fontWeight: FontWeight.w600)),
+            child: Text('Rs. $amt',
+                style: const TextStyle(fontWeight: FontWeight.w600)),
           ),
         );
       },
@@ -265,7 +305,9 @@ class _WalletScreenState extends State<WalletScreen>
         hintText: 'Enter custom amount',
         prefixText: 'Rs. ',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: const BorderSide(color: kGreen)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            borderSide: const BorderSide(color: kGreen)),
       ),
     );
   }
@@ -278,17 +320,22 @@ class _WalletScreenState extends State<WalletScreen>
           onTap: () => setState(() => _selectedMethod = m['id']),
           child: Container(
             margin: const EdgeInsets.only(bottom: 10.0),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
             decoration: BoxDecoration(
-              border: Border.all(color: isSelected ? kGreen : Colors.grey.shade200, width: 2),
+              border: Border.all(
+                  color: isSelected ? kGreen : Colors.grey.shade200, width: 2),
               borderRadius: BorderRadius.circular(15.0),
-              color: isSelected ? kGreen.withValues(alpha: 0.05) : Colors.transparent,
+              color: isSelected
+                  ? kGreen.withValues(alpha: 0.05)
+                  : Colors.transparent,
             ),
             child: Row(
               children: [
                 Text(m['emoji'], style: const TextStyle(fontSize: 20.0)),
                 const SizedBox(width: 15.0),
-                Text(m['label'], style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text(m['label'],
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 const Spacer(),
                 if (isSelected) const Icon(Icons.check_circle, color: kGreen),
               ],
@@ -300,7 +347,8 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Widget _buildTransactionsTab() {
-    if (_loadingWallet) return const Center(child: CircularProgressIndicator(color: kGreen));
+    if (_loadingWallet)
+      return const Center(child: CircularProgressIndicator(color: kGreen));
     if (_txns.isEmpty) return const Center(child: Text('No transactions yet.'));
 
     return ListView.builder(
@@ -321,7 +369,9 @@ class _WalletScreenState extends State<WalletScreen>
               Container(
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: isCredit ? kGreen.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+                  color: isCredit
+                      ? kGreen.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -335,9 +385,14 @@ class _WalletScreenState extends State<WalletScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t['description'] ?? 'Transaction', style: const TextStyle(fontWeight: FontWeight.w700)),
-                    Text(t['date'] != null ? t['date'].toString().split('T')[0] : '',
-                        style: const TextStyle(color: Colors.grey, fontSize: 12.0)),
+                    Text(t['description'] ?? 'Transaction',
+                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    Text(
+                        t['date'] != null
+                            ? t['date'].toString().split('T')[0]
+                            : '',
+                        style: const TextStyle(
+                            color: Colors.grey, fontSize: 12.0)),
                   ],
                 ),
               ),

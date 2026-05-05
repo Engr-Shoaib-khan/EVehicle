@@ -56,14 +56,16 @@ class GreenButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF00C853),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 0,
         ),
         child: isLoading
             ? const SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                child: CircularProgressIndicator(
+                    color: Colors.white, strokeWidth: 2.5),
               )
             : Text(
                 label,
@@ -81,8 +83,8 @@ class GreenButton extends StatelessWidget {
 // ─── AUTH TEXT FIELD (Standard Sizes, No ScreenUtil) ────────
 class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
-  final String label; 
-  final String? hint; 
+  final String label;
+  final String? hint;
   final IconData? icon;
   final bool isPassword;
   final TextInputType keyboardType;
@@ -91,8 +93,8 @@ class AuthTextField extends StatefulWidget {
   const AuthTextField({
     super.key,
     required this.controller,
-    required this.label, 
-    this.hint, 
+    required this.label,
+    this.hint,
     this.icon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
@@ -117,8 +119,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
         validator: widget.validator,
         style: const TextStyle(fontSize: 15.0),
         decoration: InputDecoration(
-          labelText: widget.label, 
-          hintText: widget.hint, 
+          labelText: widget.label,
+          hintText: widget.hint,
           labelStyle: TextStyle(color: Colors.grey.shade700, fontSize: 14.0),
           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.0),
           filled: true,
@@ -139,9 +141,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.red.shade400),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          prefixIcon: widget.icon != null 
-              ? Icon(widget.icon, color: Colors.grey.shade500, size: 22.0) 
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          prefixIcon: widget.icon != null
+              ? Icon(widget.icon, color: Colors.grey.shade500, size: 22.0)
               : null,
           suffixIcon: widget.isPassword
               ? IconButton(
@@ -162,7 +165,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
 // ─── GOOGLE SIGN IN BUTTON (Standard Sizes) ─────────────────
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
-  
+
   const GoogleSignInButton({super.key, required this.onPressed});
 
   @override
@@ -174,9 +177,11 @@ class GoogleSignInButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: Colors.grey.shade300, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        icon: const Icon(Icons.g_mobiledata_rounded, size: 32.0, color: Colors.red),
+        icon: const Icon(Icons.g_mobiledata_rounded,
+            size: 32.0, color: Colors.red),
         label: const Text(
           "Continue with Google",
           style: TextStyle(

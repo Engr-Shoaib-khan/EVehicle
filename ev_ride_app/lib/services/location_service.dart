@@ -17,7 +17,7 @@ class LocationService {
         throw 'Location permission denied. Please allow access in settings.';
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
       throw 'Location permission permanently denied. Please enable it in app settings.';
     }
@@ -32,19 +32,20 @@ class LocationService {
 
   /// Latitude/Longitude ko address mein badalna (Web safe)
   Future<String> getAddressFromCoords(double lat, double lng) async {
-    if (kIsWeb) return "Saddar, Karachi (Web Preview)"; // Chrome par geocoding nahi chalti
-    
+    if (kIsWeb)
+      return "Saddar, Karachi (Web Preview)"; // Chrome par geocoding nahi chalti
+
     try {
       final placemarks = await placemarkFromCoordinates(lat, lng);
       if (placemarks.isEmpty) return 'Unknown location';
       final p = placemarks.first;
-      
+
       final parts = [
         p.street,
         p.subLocality,
         p.locality,
       ].where((s) => s != null && s.isNotEmpty).toList();
-      
+
       return parts.take(2).join(', ');
     } catch (_) {
       return 'Current Location';
@@ -52,8 +53,10 @@ class LocationService {
   }
 
   /// Do points ke darmiyan distance nikalna (Kilometers mein)
-  double calculateDistance(double startLat, double startLng, double endLat, double endLng) {
-    double distanceInMeters = Geolocator.distanceBetween(startLat, startLng, endLat, endLng);
+  double calculateDistance(
+      double startLat, double startLng, double endLat, double endLng) {
+    double distanceInMeters =
+        Geolocator.distanceBetween(startLat, startLng, endLat, endLng);
     return distanceInMeters / 1000; // Meters ko KM mein badalna
   }
 

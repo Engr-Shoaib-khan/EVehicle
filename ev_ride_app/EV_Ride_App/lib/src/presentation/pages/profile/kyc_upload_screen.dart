@@ -19,7 +19,8 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
   bool _uploading = false;
 
   Future<void> _pick(String field) async {
-    final img = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    final img =
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
     if (img == null) return;
     setState(() {
       if (field == 'cnic_front') _cnicFront = File(img.path);
@@ -37,13 +38,20 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            TextField(controller: _cnicCtrl, decoration: const InputDecoration(labelText: 'CNIC Number')),
+            TextField(
+                controller: _cnicCtrl,
+                decoration: const InputDecoration(labelText: 'CNIC Number')),
             const SizedBox(height: 20),
-            ListTile(title: const Text('CNIC Front'), trailing: const Icon(Icons.upload), onTap: () => _pick('cnic_front')),
-            if (_cnicFront != null) Text('Selected: ${_cnicFront!.path.split('/').last}'),
+            ListTile(
+                title: const Text('CNIC Front'),
+                trailing: const Icon(Icons.upload),
+                onTap: () => _pick('cnic_front')),
+            if (_cnicFront != null)
+              Text('Selected: ${_cnicFront!.path.split('/').last}'),
             // ... Baaki buttons bhi isi tarah ...
             const SizedBox(height: 40),
-            ElevatedButton(onPressed: () {}, child: const Text('Submit Documents'))
+            ElevatedButton(
+                onPressed: () {}, child: const Text('Submit Documents'))
           ],
         ),
       ),

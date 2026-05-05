@@ -8,22 +8,28 @@ class SocketService {
   static SocketService get instance => _instance;
 
   io.Socket? _socket;
-  
+
   // Stream Controllers
-  final _rideTakenController    = StreamController<Map<String, dynamic>>.broadcast();
-  final _locationController     = StreamController<Map<String, dynamic>>.broadcast();
-  final _batteryController      = StreamController<Map<String, dynamic>>.broadcast();
-  final _statusController       = StreamController<Map<String, dynamic>>.broadcast();
-  final _sosController          = StreamController<Map<String, dynamic>>.broadcast();
-  final _rideRequestController  = StreamController<Map<String, dynamic>>.broadcast();
-  
+  final _rideTakenController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  final _locationController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  final _batteryController = StreamController<Map<String, dynamic>>.broadcast();
+  final _statusController = StreamController<Map<String, dynamic>>.broadcast();
+  final _sosController = StreamController<Map<String, dynamic>>.broadcast();
+  final _rideRequestController =
+      StreamController<Map<String, dynamic>>.broadcast();
+
   // Streams
-  Stream<Map<String, dynamic>> get onRideTaken        => _rideTakenController.stream;
-  Stream<Map<String, dynamic>> get onLocationUpdate   => _locationController.stream;
-  Stream<Map<String, dynamic>> get onBatteryUpdate    => _batteryController.stream;
-  Stream<Map<String, dynamic>> get onRideStatusUpdate => _statusController.stream;
-  Stream<Map<String, dynamic>> get onSosAlert         => _sosController.stream;
-  Stream<Map<String, dynamic>> get onNewRideRequest   => _rideRequestController.stream;
+  Stream<Map<String, dynamic>> get onRideTaken => _rideTakenController.stream;
+  Stream<Map<String, dynamic>> get onLocationUpdate =>
+      _locationController.stream;
+  Stream<Map<String, dynamic>> get onBatteryUpdate => _batteryController.stream;
+  Stream<Map<String, dynamic>> get onRideStatusUpdate =>
+      _statusController.stream;
+  Stream<Map<String, dynamic>> get onSosAlert => _sosController.stream;
+  Stream<Map<String, dynamic>> get onNewRideRequest =>
+      _rideRequestController.stream;
 
   SocketService._internal();
 
@@ -31,13 +37,13 @@ class SocketService {
   Future<void> connect({String? token}) async {
     if (_socket?.connected ?? false) return;
 
-    _socket = io.io(kBaseUrl, 
-      io.OptionBuilder()
-        .setTransports(['websocket'])
-        .setAuth({'token': token})
-        .enableAutoConnect()
-        .build()
-    );
+    _socket = io.io(
+        kBaseUrl,
+        io.OptionBuilder()
+            .setTransports(['websocket'])
+            .setAuth({'token': token})
+            .enableAutoConnect()
+            .build());
 
     _socket!.onConnect((_) {
       debugPrint('[SOCKET] Connected to server');
@@ -48,14 +54,21 @@ class SocketService {
     });
 
     // Listen for events
-    _socket!.on('ride_taken', (data) => _rideTakenController.add(Map<String, dynamic>.from(data)));
-    _socket!.on('driver:location_update', (data) => _locationController.add(Map<String, dynamic>.from(data)));
-    _socket!.on('driver:battery_update', (data) => _batteryController.add(Map<String, dynamic>.from(data)));
-    _socket!.on('ride_status_update', (data) => _statusController.add(Map<String, dynamic>.from(data)));
-    _socket!.on('sos_alert', (data) => _sosController.add(Map<String, dynamic>.from(data)));
-    _socket!.on('new_ride_request', (data) => _rideRequestController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('ride_taken',
+        (data) => _rideTakenController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('driver:location_update',
+        (data) => _locationController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('driver:battery_update',
+        (data) => _batteryController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('ride_status_update',
+        (data) => _statusController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('sos_alert',
+        (data) => _sosController.add(Map<String, dynamic>.from(data)));
+    _socket!.on('new_ride_request',
+        (data) => _rideRequestController.add(Map<String, dynamic>.from(data)));
 
-    _socket!.onConnectError((err) => debugPrint('[SOCKET] Connect Error: $err'));
+    _socket!
+        .onConnectError((err) => debugPrint('[SOCKET] Connect Error: $err'));
     _socket!.onError((err) => debugPrint('[SOCKET] Error: $err'));
   }
 

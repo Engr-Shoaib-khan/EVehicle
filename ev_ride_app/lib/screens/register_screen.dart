@@ -12,14 +12,14 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey   = GlobalKey<FormState>();
-  final _nameCtrl  = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
 
   String _selectedRole = 'rider'; // 'rider' | 'driver'
-  bool   _isLoading    = false;
+  bool _isLoading = false;
 
   final _authService = AuthService();
 
@@ -37,11 +37,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     final result = await _authService.register(
-      fullName:    _nameCtrl.text.trim(),
-      email:       _emailCtrl.text.trim(),
-      password:    _passCtrl.text,
+      fullName: _nameCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      password: _passCtrl.text,
       phoneNumber: _phoneCtrl.text.trim(),
-      role:        _selectedRole,
+      role: _selectedRole,
     );
 
     setState(() => _isLoading = false);
@@ -52,7 +52,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => OtpScreen(email: result.email ?? _emailCtrl.text.trim()),
+          builder: (_) =>
+              OtpScreen(email: result.email ?? _emailCtrl.text.trim()),
         ),
       );
     } else {
@@ -108,8 +109,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hint: 'Shoaib Khan',
                   icon: Icons.person_outline_rounded,
                   controller: _nameCtrl,
-                  validator: (v) =>
-                      (v == null || v.trim().length < 2) ? 'Enter your full name' : null,
+                  validator: (v) => (v == null || v.trim().length < 2)
+                      ? 'Enter your full name'
+                      : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -121,7 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Email is required';
-                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(v)) return 'Enter a valid email';
+                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(v))
+                      return 'Enter a valid email';
                     return null;
                   },
                 ),
@@ -133,8 +136,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   icon: Icons.lock_outline_rounded,
                   controller: _passCtrl,
                   isPassword: true,
-                  validator: (v) =>
-                      (v == null || v.length < 8) ? 'Password must be at least 8 characters' : null,
+                  validator: (v) => (v == null || v.length < 8)
+                      ? 'Password must be at least 8 characters'
+                      : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -145,7 +149,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Phone number is required';
+                    if (v == null || v.isEmpty)
+                      return 'Phone number is required';
                     if (!RegExp(r'^(\+92|0)3[0-9]{9}$').hasMatch(v)) {
                       return 'Enter a valid Pakistani mobile number';
                     }
@@ -170,7 +175,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Expanded(
                           child: Text(
                             'Driver accounts require KYC verification (CNIC + License). You can complete this after registration.',
-                            style: TextStyle(fontSize: 12, color: kGreenDark, height: 1.4),
+                            style: TextStyle(
+                                fontSize: 12, color: kGreenDark, height: 1.4),
                           ),
                         ),
                       ],
@@ -198,7 +204,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () => Navigator.pop(context),
                       child: const Text('Login',
                           style: TextStyle(
-                              color: kGreen, fontWeight: FontWeight.w700, fontSize: 14)),
+                              color: kGreen,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14)),
                     ),
                   ],
                 ),
@@ -273,7 +281,12 @@ class _RoleOption extends StatelessWidget {
             color: isSelected ? kGreen : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             boxShadow: isSelected
-                ? [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))]
+                ? [
+                    BoxShadow(
+                        color: kGreen.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2))
+                  ]
                 : [],
           ),
           child: Center(

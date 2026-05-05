@@ -15,11 +15,11 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final _otpController = TextEditingController();
-  final _authService   = AuthService();
+  final _authService = AuthService();
 
-  bool _isLoading  = false;
+  bool _isLoading = false;
   bool _isResending = false;
-  String _otp      = '';
+  String _otp = '';
 
   Future<void> _handleVerify() async {
     if (_otp.length < 6) {
@@ -30,7 +30,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
     final result = await _authService.verifyOtp(
       email: widget.email,
-      otp:   _otp,
+      otp: _otp,
     );
 
     setState(() => _isLoading = false);
@@ -202,8 +202,7 @@ class _OtpScreenState extends State<OtpScreen> {
               Text(
                 'Code expires in 10 minutes.',
                 style: TextStyle(
-                    fontSize: 12,
-                    color: kTextSecondary.withValues(alpha: 0.7)),
+                    fontSize: 12, color: kTextSecondary.withValues(alpha: 0.7)),
               ),
             ],
           ),

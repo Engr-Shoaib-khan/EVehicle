@@ -9,8 +9,8 @@ class AuthResult {
   final String message;
   final String? token;
   final Map<String, dynamic>? user;
-  final String? email;        // returned on register for OTP screen pre-fill
-  final bool requiresOtp;    // returned on login-before-verify
+  final String? email; // returned on register for OTP screen pre-fill
+  final bool requiresOtp; // returned on login-before-verify
 
   const AuthResult({
     required this.success,
@@ -37,11 +37,11 @@ class AuthService {
             Uri.parse('$kBaseUrl/api/auth/register'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'fullName':    fullName,
-              'email':       email,
-              'password':    password,
+              'fullName': fullName,
+              'email': email,
+              'password': password,
               'phoneNumber': phoneNumber,
-              'role':        role,
+              'role': role,
             }),
           )
           .timeout(const Duration(seconds: 15));
@@ -51,7 +51,7 @@ class AuthService {
       return AuthResult(
         success: data['success'] == true,
         message: data['message'] ?? 'Unknown error',
-        email:   data['email'],
+        email: data['email'],
       );
     } catch (e) {
       return AuthResult(success: false, message: 'Connection error: $e');
@@ -80,8 +80,8 @@ class AuthService {
       return AuthResult(
         success: data['success'] == true,
         message: data['message'] ?? 'Unknown error',
-        token:   data['token'],
-        user:    data['user'],
+        token: data['token'],
+        user: data['user'],
       );
     } catch (e) {
       return AuthResult(success: false, message: 'Connection error: $e');
@@ -109,11 +109,11 @@ class AuthService {
       }
 
       return AuthResult(
-        success:     data['success'] == true,
-        message:     data['message'] ?? 'Unknown error',
-        token:       data['token'],
-        user:        data['user'],
-        email:       data['email'],
+        success: data['success'] == true,
+        message: data['message'] ?? 'Unknown error',
+        token: data['token'],
+        user: data['user'],
+        email: data['email'],
         requiresOtp: data['requiresOtp'] == true,
       );
     } catch (e) {

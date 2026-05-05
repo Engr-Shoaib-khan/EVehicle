@@ -14,9 +14,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey   = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
   final _authService = AuthService();
 
   bool _isLoading = false;
@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final result = await _authService.login(
-      email:    _emailCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
       password: _passCtrl.text,
     );
 
@@ -55,7 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => OtpScreen(email: result.email ?? _emailCtrl.text.trim()),
+          builder: (_) =>
+              OtpScreen(email: result.email ?? _emailCtrl.text.trim()),
         ),
       );
     } else {
@@ -161,7 +162,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 GoogleSignInButton(onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Google Sign-In coming soon!')),
+                    const SnackBar(
+                        content: Text('Google Sign-In coming soon!')),
                   );
                 }),
 
@@ -174,8 +176,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text("Don't have an account?",
                         style: TextStyle(color: kTextSecondary, fontSize: 14)),
                     TextButton(
-                      onPressed: () => Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => const RegisterScreen())),
+                      onPressed: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const RegisterScreen())),
                       child: const Text('Sign Up',
                           style: TextStyle(
                               color: kGreen,

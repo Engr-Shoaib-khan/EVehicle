@@ -12,12 +12,12 @@ import 'screens/driver_dashboard_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs    = await SharedPreferences.getInstance();
-  final token    = prefs.getString(kTokenKey);
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString(kTokenKey);
   final userJson = prefs.getString(kUserKey);
 
-  bool   isLoggedIn = token != null && token.isNotEmpty;
-  String role       = 'rider';
+  bool isLoggedIn = token != null && token.isNotEmpty;
+  String role = 'rider';
 
   if (isLoggedIn && userJson != null) {
     try {
@@ -36,8 +36,8 @@ class EVRideApp extends StatelessWidget {
   final String role;
 
   const EVRideApp({
-    super.key, 
-    required this.isLoggedIn, 
+    super.key,
+    required this.isLoggedIn,
     required this.role,
   });
 
@@ -56,26 +56,30 @@ class EVRideApp extends StatelessWidget {
           ),
           builder: (context, widget) {
             // Web par app ko "Phone Frame" mein dikhane ke liye
-            return kIsWeb 
-              ? Center(
-                  child: Container(
-                    width: 420, 
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 20)],
+            return kIsWeb
+                ? Center(
+                    child: Container(
+                      width: 420,
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [
+                          BoxShadow(color: Colors.black12, blurRadius: 20)
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: widget!,
+                      ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: widget!,
-                    ),
-                  ),
-                )
-              : widget!;
+                  )
+                : widget!;
           },
           // 🔥 MAIN ROUTING LOGIC 🔥
-          home: isLoggedIn 
-              ? (role == 'driver' ? const DriverDashboardScreen() : const HomeScreen())
+          home: isLoggedIn
+              ? (role == 'driver'
+                  ? const DriverDashboardScreen()
+                  : const HomeScreen())
               : const MainAuthScreen(),
         );
       },

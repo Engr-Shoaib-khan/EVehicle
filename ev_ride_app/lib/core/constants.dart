@@ -3,25 +3,27 @@ import 'package:flutter/material.dart';
 
 // ── API ───────────────────────────────────────────────────────────
 // Use your machine's local IP for physical devices.
-const String _myIP = '192.168.1.5'; 
-final String kBaseUrl = kIsWeb 
-    ? 'http://localhost:5000' 
-    : (defaultTargetPlatform == TargetPlatform.android ? 'http://10.0.2.2:5000' : 'http://$_myIP:5000');
+const String _myIP = '192.168.1.5';
+final String kBaseUrl = kIsWeb
+    ? 'http://localhost:5000'
+    : (defaultTargetPlatform == TargetPlatform.android
+        ? 'http://10.0.2.2:5000'
+        : 'http://$_myIP:5000');
 
 // ── Brand Colors ──────────────────────────────────────────────────
-const Color kGreen        = Color(0xFF00C853);
-const Color kGreenDark    = Color(0xFF00897B);
-const Color kGreenLight   = Color(0xFFE8F5E9);
-const Color kBg           = Color(0xFFFFFFFF);
-const Color kSurface      = Color(0xFFF7F9FC);
-const Color kTextPrimary  = Color(0xFF0D1B2A);
-const Color kTextSecondary= Color(0xFF6B7280);
-const Color kBorder       = Color(0xFFE5E7EB);
-const Color kError        = Color(0xFFEF4444);
+const Color kGreen = Color(0xFF00C853);
+const Color kGreenDark = Color(0xFF00897B);
+const Color kGreenLight = Color(0xFFE8F5E9);
+const Color kBg = Color(0xFFFFFFFF);
+const Color kSurface = Color(0xFFF7F9FC);
+const Color kTextPrimary = Color(0xFF0D1B2A);
+const Color kTextSecondary = Color(0xFF6B7280);
+const Color kBorder = Color(0xFFE5E7EB);
+const Color kError = Color(0xFFEF4444);
 
 // ── Shared Prefs Keys ─────────────────────────────────────────────
-const String kTokenKey    = 'auth_token';
-const String kUserKey     = 'auth_user';
+const String kTokenKey = 'auth_token';
+const String kUserKey = 'auth_user';
 
 // ── App Theme ─────────────────────────────────────────────────────
 ThemeData buildAppTheme() {

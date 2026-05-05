@@ -39,31 +39,33 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final _locationService = LocationService();
-  final _authService     = AuthService();
+  final _authService = AuthService();
 
   GoogleMapController? _mapController;
-  LatLng?   _pickupLatLng;
-  LatLng?   _dropoffLatLng;
-  String    _pickupAddress  = 'Fetching location...';
-  String    _dropoffAddress = '';
-  final Set<Marker>   _markers   = {};
+  LatLng? _pickupLatLng;
+  LatLng? _dropoffLatLng;
+  String _pickupAddress = 'Fetching location...';
+  String _dropoffAddress = '';
+  final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
   Map<String, dynamic>? _user;
   _SheetPhase _phase = _SheetPhase.selectVehicle;
-  int  _selectedVehicleIndex = 0;
+  int _selectedVehicleIndex = 0;
   final String _selectedPaymentMethod = 'cash';
   bool _isLoading = false;
 
   late final AnimationController _sheetAnim;
-  late final Animation<double>   _sheetSlide;
+  late final Animation<double> _sheetSlide;
   final _dropoffCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _sheetAnim = AnimationController(vsync: this, duration: const Duration(milliseconds: 420));
-    _sheetSlide = CurvedAnimation(parent: _sheetAnim, curve: Curves.easeOutQuart);
+    _sheetAnim = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 420));
+    _sheetSlide =
+        CurvedAnimation(parent: _sheetAnim, curve: Curves.easeOutQuart);
     _loadUser();
     _initLocation();
     _sheetAnim.forward();
@@ -79,22 +81,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final raw   = prefs.getString(kUserKey);
+    final raw = prefs.getString(kUserKey);
     if (raw != null && mounted) setState(() => _user = jsonDecode(raw));
   }
 
   Future<void> _initLocation() async {
     try {
-      final pos  = await _locationService.getCurrentPosition();
-      final addr = await _locationService.getAddressFromCoords(pos.latitude, pos.longitude);
+      final pos = await _locationService.getCurrentPosition();
+      final addr = await _locationService.getAddressFromCoords(
+          pos.latitude, pos.longitude);
       if (!mounted) return;
       setState(() {
-        _pickupLatLng    = LatLng(pos.latitude, pos.longitude);
-        _pickupAddress   = addr;
+        _pickupLatLng = LatLng(pos.latitude, pos.longitude);
+        _pickupAddress = addr;
       });
       _updateMarkers();
       _mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(target: _pickupLatLng!, zoom: 15.5)),
+        CameraUpdate.newCameraPosition(
+            CameraPosition(target: _pickupLatLng!, zoom: 15.5)),
       );
     } catch (e) {
       if (mounted) {
@@ -127,19 +131,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> _onMapTap(LatLng latLng) async {
     if (_phase == _SheetPhase.searching) return;
-    
-    setState(() { 
-      _dropoffLatLng = latLng; 
-      _dropoffAddress = 'Fetching address...'; 
+
+    setState(() {
+      _dropoffLatLng = latLng;
+      _dropoffAddress = 'Fetching address...';
       _dropoffCtrl.text = 'Fetching address...';
     });
     _updateMarkers();
-    
-    final addr = await _locationService.getAddressFromCoords(latLng.latitude, latLng.longitude);
+
+    final addr = await _locationService.getAddressFromCoords(
+        latLng.latitude, latLng.longitude);
     if (mounted) {
-      setState(() { 
-        _dropoffAddress = addr; 
-        _dropoffCtrl.text = addr; 
+      setState(() {
+        _dropoffAddress = addr;
+        _dropoffCtrl.text = addr;
       });
       _updateMarkers();
     }
@@ -149,12 +154,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (_pickupLatLng != null && _dropoffLatLng != null) {
       final bounds = LatLngBounds(
         southwest: LatLng(
-          _pickupLatLng!.latitude  < _dropoffLatLng!.latitude  ? _pickupLatLng!.latitude  : _dropoffLatLng!.latitude,
-          _pickupLatLng!.longitude < _dropoffLatLng!.longitude ? _pickupLatLng!.longitude : _dropoffLatLng!.longitude,
+          _pickupLatLng!.latitude < _dropoffLatLng!.latitude
+              ? _pickupLatLng!.latitude
+              : _dropoffLatLng!.latitude,
+          _pickupLatLng!.longitude < _dropoffLatLng!.longitude
+              ? _pickupLatLng!.longitude
+              : _dropoffLatLng!.longitude,
         ),
         northeast: LatLng(
-          _pickupLatLng!.latitude  > _dropoffLatLng!.latitude  ? _pickupLatLng!.latitude  : _dropoffLatLng!.latitude,
-          _pickupLatLng!.longitude > _dropoffLatLng!.longitude ? _pickupLatLng!.longitude : _dropoffLatLng!.longitude,
+          _pickupLatLng!.latitude > _dropoffLatLng!.latitude
+              ? _pickupLatLng!.latitude
+              : _dropoffLatLng!.latitude,
+          _pickupLatLng!.longitude > _dropoffLatLng!.longitude
+              ? _pickupLatLng!.longitude
+              : _dropoffLatLng!.longitude,
         ),
       );
       _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 120));
@@ -163,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> _confirmRide() async {
     if (_dropoffLatLng == null) {
-      _showSnack('Please tap the map to set a drop-off location.', isError: true);
+      _showSnack('Please tap the map to set a drop-off location.',
+          isError: true);
       return;
     }
     setState(() => _phase = _SheetPhase.confirmRide);
@@ -184,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
 
     final vehicle = kEvFleet[_selectedVehicleIndex];
-    
+
     final result = await _rideService.requestRide(
       pickupCoordinates: [_pickupLatLng!.longitude, _pickupLatLng!.latitude],
       pickupAddress: _pickupAddress,
@@ -222,8 +236,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Future<void> _logout() async {
     await _authService.logout();
     if (!mounted) return;
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (_) => const MainAuthScreen()), (_) => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MainAuthScreen()),
+        (_) => false);
   }
 
   void _showSnack(String msg, {bool isError = false}) {
@@ -237,14 +253,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   double get _bottomSheetHeight {
     if (_phase == _SheetPhase.searching) return 150.h;
-    return _phase == _SheetPhase.selectVehicle ? 400.h.clamp(380.0, 450.0) : 360.h.clamp(340.0, 420.0);
+    return _phase == _SheetPhase.selectVehicle
+        ? 400.h.clamp(380.0, 450.0)
+        : 360.h.clamp(340.0, 420.0);
   }
 
   @override
   Widget build(BuildContext context) {
-    final firstName = (_user?['fullName'] as String? ?? 'Rider').split(' ').first;
-    final isDriver  = (_user?['role'] ?? 'rider') == 'driver';
-    final vehicle   = kEvFleet[_selectedVehicleIndex];
+    final firstName =
+        (_user?['fullName'] as String? ?? 'Rider').split(' ').first;
+    final isDriver = (_user?['role'] ?? 'rider') == 'driver';
+    final vehicle = kEvFleet[_selectedVehicleIndex];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -254,19 +273,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         body: Stack(
           children: [
             _buildMap(),
-            if (_phase != _SheetPhase.searching) 
-              Positioned(top: 0, left: 0, right: 0, child: _buildTopBar(firstName, isDriver)),
-            
+            if (_phase != _SheetPhase.searching)
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildTopBar(firstName, isDriver)),
             Positioned(
               bottom: _bottomSheetHeight + 16.h,
               right: 16.w,
               child: _buildRecenterButton(),
             ),
-            
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: SlideTransition(
-                position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(_sheetSlide),
+                position:
+                    Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+                        .animate(_sheetSlide),
                 child: _buildBottomSheet(vehicle),
               ),
             ),
@@ -291,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _mapController = ctrl;
         if (_pickupLatLng != null) {
           ctrl.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: _pickupLatLng!, zoom: 15.5)));
+              CameraPosition(target: _pickupLatLng!, zoom: 15.5)));
         }
       },
       onTap: _onMapTap,
@@ -303,48 +328,73 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
-          padding: EdgeInsets.fromLTRB(20.w, 52.h.clamp(40.0, 70.0), 20.w, 14.h),
+          padding:
+              EdgeInsets.fromLTRB(20.w, 52.h.clamp(40.0, 70.0), 20.w, 14.h),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.82),
-            border: Border(bottom: BorderSide(color: kBorder.withValues(alpha: 0.5))),
+            border: Border(
+                bottom: BorderSide(color: kBorder.withValues(alpha: 0.5))),
           ),
           child: Row(children: [
             Container(
-              width: 40.w.clamp(35.0, 50.0), height: 40.w.clamp(35.0, 50.0),
+              width: 40.w.clamp(35.0, 50.0),
+              height: 40.w.clamp(35.0, 50.0),
               decoration: const BoxDecoration(
-                gradient: LinearGradient(colors: [kGreen, kGreenDark],
-                  begin: Alignment.topLeft, end: Alignment.bottomRight),
+                gradient: LinearGradient(
+                    colors: [kGreen, kGreenDark],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
                 shape: BoxShape.circle,
               ),
-              child: Center(child: Text(
+              child: Center(
+                  child: Text(
                 firstName.isNotEmpty ? firstName[0].toUpperCase() : 'R',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16.sp.clamp(14.0, 20.0)),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.sp.clamp(14.0, 20.0)),
               )),
             ),
             SizedBox(width: 12.w),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Hey, $firstName', style: TextStyle(fontSize: 16.sp.clamp(14.0, 18.0), fontWeight: FontWeight.w700, color: kTextPrimary), maxLines: 1, overflow: TextOverflow.ellipsis),
-              SizedBox(height: 2.h),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                decoration: BoxDecoration(
-                  color: isDriver ? const Color(0xFFFFF3E0) : kGreenLight,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(isDriver ? 'Driver Mode' : 'Rider Mode',
-                  style: TextStyle(fontSize: 10.sp.clamp(9.0, 12.0), fontWeight: FontWeight.w600,
-                    color: isDriver ? const Color(0xFFE65100) : kGreenDark)),
-              ),
-            ])),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text('Hey, $firstName',
+                      style: TextStyle(
+                          fontSize: 16.sp.clamp(14.0, 18.0),
+                          fontWeight: FontWeight.w700,
+                          color: kTextPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  SizedBox(height: 2.h),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                    decoration: BoxDecoration(
+                      color: isDriver ? const Color(0xFFFFF3E0) : kGreenLight,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(isDriver ? 'Driver Mode' : 'Rider Mode',
+                        style: TextStyle(
+                            fontSize: 10.sp.clamp(9.0, 12.0),
+                            fontWeight: FontWeight.w600,
+                            color: isDriver
+                                ? const Color(0xFFE65100)
+                                : kGreenDark)),
+                  ),
+                ])),
             GestureDetector(
               onTap: _logout,
               child: Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: kSurface, borderRadius: BorderRadius.circular(10.r),
+                  color: kSurface,
+                  borderRadius: BorderRadius.circular(10.r),
                   border: Border.all(color: kBorder),
                 ),
-                child: Icon(Icons.logout_rounded, size: 18.r.clamp(16.0, 22.0), color: kTextSecondary),
+                child: Icon(Icons.logout_rounded,
+                    size: 18.r.clamp(16.0, 22.0), color: kTextSecondary),
               ),
             ),
           ]),
@@ -358,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       onTap: () {
         if (_pickupLatLng != null) {
           _mapController?.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: _pickupLatLng!, zoom: 15.5)));
+              CameraPosition(target: _pickupLatLng!, zoom: 15.5)));
         }
       },
       child: ClipRRect(
@@ -371,9 +421,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: Colors.white.withValues(alpha: 0.85),
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: kBorder.withValues(alpha: 0.6)),
-              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, 4))],
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4))
+              ],
             ),
-            child: Icon(Icons.my_location_rounded, color: kGreen, size: 22.r.clamp(20.0, 26.0)),
+            child: Icon(Icons.my_location_rounded,
+                color: kGreen, size: 22.r.clamp(20.0, 26.0)),
           ),
         ),
       ),
@@ -389,12 +445,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.94),
             borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 32, offset: const Offset(0, -4))],
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 32,
+                  offset: const Offset(0, -4))
+            ],
           ),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             SizedBox(height: 12.h),
-            Container(width: 40.w.clamp(30.0, 50.0), height: 4.h,
-              decoration: BoxDecoration(color: kBorder, borderRadius: BorderRadius.circular(2.r))),
+            Container(
+                width: 40.w.clamp(30.0, 50.0),
+                height: 4.h,
+                decoration: BoxDecoration(
+                    color: kBorder, borderRadius: BorderRadius.circular(2.r))),
             SizedBox(height: 16.h),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -402,7 +466,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ? _buildSearchingSheet()
                   : _phase == _SheetPhase.selectVehicle
                       ? _buildSelectVehicleSheet(key: const ValueKey('select'))
-                      : _buildConfirmSheet(vehicle, key: const ValueKey('confirm')),
+                      : _buildConfirmSheet(vehicle,
+                          key: const ValueKey('confirm')),
             ),
             SizedBox(height: 16.h),
           ]),
@@ -417,9 +482,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Column(children: [
         const CircularProgressIndicator(color: kGreen),
         SizedBox(height: 20.h),
-        Text('Finding nearby drivers...', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: kTextPrimary)),
+        Text('Finding nearby drivers...',
+            style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: kTextPrimary)),
         SizedBox(height: 8.h),
-        Text('Please wait while we broadcast your request.', style: TextStyle(fontSize: 13.sp, color: kTextSecondary)),
+        Text('Please wait while we broadcast your request.',
+            style: TextStyle(fontSize: 13.sp, color: kTextSecondary)),
       ]),
     );
   }
@@ -432,11 +502,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _buildLocationInputs(),
         SizedBox(height: 20.h),
         Row(children: [
-          Expanded(child: Text('Choose your ride', style: TextStyle(fontSize: 15.sp.clamp(14.0, 18.0), fontWeight: FontWeight.w700, color: kTextPrimary))),
+          Expanded(
+              child: Text('Choose your ride',
+                  style: TextStyle(
+                      fontSize: 15.sp.clamp(14.0, 18.0),
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary))),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-            decoration: BoxDecoration(color: kGreenLight, borderRadius: BorderRadius.circular(20.r)),
-            child: Text('All Electric', style: TextStyle(fontSize: 10.sp.clamp(9.0, 12.0), fontWeight: FontWeight.w600, color: kGreenDark)),
+            decoration: BoxDecoration(
+                color: kGreenLight, borderRadius: BorderRadius.circular(20.r)),
+            child: Text('All Electric',
+                style: TextStyle(
+                    fontSize: 10.sp.clamp(9.0, 12.0),
+                    fontWeight: FontWeight.w600,
+                    color: kGreenDark)),
           ),
         ]),
         SizedBox(height: 12.h),
@@ -455,11 +535,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         SizedBox(height: 16.h),
         SizedBox(
-          width: double.infinity, height: 52.h.clamp(45.0, 60.0),
+          width: double.infinity,
+          height: 52.h.clamp(45.0, 60.0),
           child: ElevatedButton(
             onPressed: _confirmRide,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('Confirm Pickup Point', style: TextStyle(fontSize: 15.sp.clamp(14.0, 18.0), fontWeight: FontWeight.w600)),
+              Text('Confirm Pickup Point',
+                  style: TextStyle(
+                      fontSize: 15.sp.clamp(14.0, 18.0),
+                      fontWeight: FontWeight.w600)),
               SizedBox(width: 8.w),
               Icon(Icons.arrow_forward_rounded, size: 18.r.clamp(16.0, 22.0)),
             ]),
@@ -472,36 +556,55 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildLocationInputs() {
     return Container(
       decoration: BoxDecoration(
-        color: kSurface, borderRadius: BorderRadius.circular(16.r), border: Border.all(color: kBorder)),
+          color: kSurface,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: kBorder)),
       child: Column(children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
           child: Row(children: [
-            Container(width: 10.w.clamp(8.0, 12.0), height: 10.w.clamp(8.0, 12.0), decoration: const BoxDecoration(color: kGreen, shape: BoxShape.circle)),
+            Container(
+                width: 10.w.clamp(8.0, 12.0),
+                height: 10.w.clamp(8.0, 12.0),
+                decoration:
+                    const BoxDecoration(color: kGreen, shape: BoxShape.circle)),
             SizedBox(width: 10.w),
-            Expanded(child: Text(_pickupAddress,
-              style: TextStyle(fontSize: 13.sp.clamp(12.0, 16.0), color: kTextPrimary, fontWeight: FontWeight.w500),
-              maxLines: 1, overflow: TextOverflow.ellipsis)),
+            Expanded(
+                child: Text(_pickupAddress,
+                    style: TextStyle(
+                        fontSize: 13.sp.clamp(12.0, 16.0),
+                        color: kTextPrimary,
+                        fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis)),
           ]),
         ),
         const Divider(height: 1, color: kBorder),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 4.h),
           child: Row(children: [
-            Container(width: 10.w.clamp(8.0, 12.0), height: 10.w.clamp(8.0, 12.0),
-              decoration: BoxDecoration(shape: BoxShape.circle,
-                border: Border.all(color: kError, width: 2))),
+            Container(
+                width: 10.w.clamp(8.0, 12.0),
+                height: 10.w.clamp(8.0, 12.0),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: kError, width: 2))),
             SizedBox(width: 10.w),
-            Expanded(child: TextField(
+            Expanded(
+                child: TextField(
               controller: _dropoffCtrl,
               readOnly: true, // Only allow map tap for now to ensure precision
               onTap: () => _showSnack('Tap the map to select destination'),
-              style: TextStyle(fontSize: 13.sp.clamp(12.0, 16.0), color: kTextPrimary),
+              style: TextStyle(
+                  fontSize: 13.sp.clamp(12.0, 16.0), color: kTextPrimary),
               decoration: InputDecoration(
                 hintText: 'Where to? (tap map)',
-                hintStyle: TextStyle(color: kTextSecondary, fontSize: 13.sp.clamp(12.0, 16.0)),
-                border: InputBorder.none, enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none, filled: false,
+                hintStyle: TextStyle(
+                    color: kTextSecondary, fontSize: 13.sp.clamp(12.0, 16.0)),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                filled: false,
                 contentPadding: EdgeInsets.symmetric(vertical: 10.h),
               ),
             )),
@@ -513,8 +616,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildConfirmSheet(VehicleType vehicle, {Key? key}) {
     const double distanceKm = 5.0;
-    final int baseFareNum = int.tryParse(vehicle.baseFare.replaceAll(RegExp(r'[^0-9]'), '')) ?? 50;
-    final int perKmNum    = int.tryParse(vehicle.pricePerKm.replaceAll(RegExp(r'[^0-9]'), '')) ?? 20;
+    final int baseFareNum =
+        int.tryParse(vehicle.baseFare.replaceAll(RegExp(r'[^0-9]'), '')) ?? 50;
+    final int perKmNum =
+        int.tryParse(vehicle.pricePerKm.replaceAll(RegExp(r'[^0-9]'), '')) ??
+            20;
     final int estimatedFare = (baseFareNum + (distanceKm * perKmNum)).round();
 
     return Padding(
@@ -526,64 +632,120 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             onTap: () => setState(() => _phase = _SheetPhase.selectVehicle),
             child: Container(
               padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(color: kSurface, borderRadius: BorderRadius.circular(10.r), border: Border.all(color: kBorder)),
-              child: Icon(Icons.arrow_back_rounded, size: 18.r.clamp(16.0, 22.0), color: kTextPrimary),
+              decoration: BoxDecoration(
+                  color: kSurface,
+                  borderRadius: BorderRadius.circular(10.r),
+                  border: Border.all(color: kBorder)),
+              child: Icon(Icons.arrow_back_rounded,
+                  size: 18.r.clamp(16.0, 22.0), color: kTextPrimary),
             ),
           ),
           SizedBox(width: 12.w),
-          Expanded(child: Text('Confirm Your Ride', style: TextStyle(fontSize: 16.sp.clamp(14.0, 20.0), fontWeight: FontWeight.w700, color: kTextPrimary), maxLines: 1, overflow: TextOverflow.ellipsis)),
+          Expanded(
+              child: Text('Confirm Your Ride',
+                  style: TextStyle(
+                      fontSize: 16.sp.clamp(14.0, 20.0),
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis)),
         ]),
         SizedBox(height: 16.h),
         Container(
           padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(color: kSurface, borderRadius: BorderRadius.circular(16.r), border: Border.all(color: kBorder)),
+          decoration: BoxDecoration(
+              color: kSurface,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: kBorder)),
           child: Column(children: [
             Row(children: [
-              Text(vehicle.emoji, style: TextStyle(fontSize: 28.sp.clamp(24.0, 36.0))),
+              Text(vehicle.emoji,
+                  style: TextStyle(fontSize: 28.sp.clamp(24.0, 36.0))),
               SizedBox(width: 12.w),
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(vehicle.name, style: TextStyle(fontSize: 14.sp.clamp(12.0, 16.0), fontWeight: FontWeight.w700, color: kTextPrimary), maxLines: 1, overflow: TextOverflow.ellipsis),
-                  Text(vehicle.description, style: TextStyle(fontSize: 11.sp.clamp(10.0, 13.0), color: kTextSecondary), maxLines: 1, overflow: TextOverflow.ellipsis),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(vehicle.name,
+                          style: TextStyle(
+                              fontSize: 14.sp.clamp(12.0, 16.0),
+                              fontWeight: FontWeight.w700,
+                              color: kTextPrimary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                      Text(vehicle.description,
+                          style: TextStyle(
+                              fontSize: 11.sp.clamp(10.0, 13.0),
+                              color: kTextSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                    ]),
               ),
               SizedBox(width: 8.w),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Text('Rs. $estimatedFare', style: TextStyle(fontSize: 18.sp.clamp(16.0, 22.0), fontWeight: FontWeight.w800, color: kTextPrimary)),
-                Text('Estimated', style: TextStyle(fontSize: 10.sp.clamp(9.0, 12.0), color: kTextSecondary)),
+                Text('Rs. $estimatedFare',
+                    style: TextStyle(
+                        fontSize: 18.sp.clamp(16.0, 22.0),
+                        fontWeight: FontWeight.w800,
+                        color: kTextPrimary)),
+                Text('Estimated',
+                    style: TextStyle(
+                        fontSize: 10.sp.clamp(9.0, 12.0),
+                        color: kTextSecondary)),
               ]),
             ]),
-            Padding(padding: EdgeInsets.symmetric(vertical: 12.h), child: const Divider(color: kBorder, height: 1)),
-            _RouteLine(icon: Icons.circle, iconColor: kGreen, label: 'Pickup', value: _pickupAddress),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: const Divider(color: kBorder, height: 1)),
+            _RouteLine(
+                icon: Icons.circle,
+                iconColor: kGreen,
+                label: 'Pickup',
+                value: _pickupAddress),
             SizedBox(height: 8.h),
-            _RouteLine(icon: Icons.location_on_rounded, iconColor: kError, label: 'Drop-off',
-              value: _dropoffAddress.isEmpty ? 'Map selection' : _dropoffAddress),
+            _RouteLine(
+                icon: Icons.location_on_rounded,
+                iconColor: kError,
+                label: 'Drop-off',
+                value: _dropoffAddress.isEmpty
+                    ? 'Map selection'
+                    : _dropoffAddress),
           ]),
         ),
         SizedBox(height: 14.h),
-        
         Wrap(
           spacing: 8.w,
           runSpacing: 8.h,
           children: [
-            _InfoChip(icon: Icons.access_time_rounded, label: '~${vehicle.etaMinutes} min'),
+            _InfoChip(
+                icon: Icons.access_time_rounded,
+                label: '~${vehicle.etaMinutes} min'),
             const _InfoChip(icon: Icons.payments_outlined, label: 'Cash'),
-            _InfoChip(icon: Icons.people_outline_rounded, label: '${vehicle.capacity} seat${vehicle.capacity > 1 ? "s" : ""}'),
+            _InfoChip(
+                icon: Icons.people_outline_rounded,
+                label:
+                    '${vehicle.capacity} seat${vehicle.capacity > 1 ? "s" : ""}'),
           ],
         ),
-        
         SizedBox(height: 16.h),
         SizedBox(
-          width: double.infinity, height: 52.h.clamp(45.0, 60.0),
+          width: double.infinity,
+          height: 52.h.clamp(45.0, 60.0),
           child: ElevatedButton(
             onPressed: _isLoading ? null : _requestRide,
             child: _isLoading
-                ? SizedBox(width: 22.r.clamp(20.0, 26.0), height: 22.r.clamp(20.0, 26.0),
-                    child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
+                ? SizedBox(
+                    width: 22.r.clamp(20.0, 26.0),
+                    height: 22.r.clamp(20.0, 26.0),
+                    child: const CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2.5))
                 : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Icon(Icons.bolt_rounded, size: 20.r.clamp(18.0, 24.0)),
                     SizedBox(width: 6.w),
-                    Text('Request ${vehicle.name}', style: TextStyle(fontSize: 15.sp.clamp(14.0, 18.0), fontWeight: FontWeight.w700)),
+                    Text('Request ${vehicle.name}',
+                        style: TextStyle(
+                            fontSize: 15.sp.clamp(14.0, 18.0),
+                            fontWeight: FontWeight.w700)),
                   ]),
           ),
         ),
@@ -595,9 +757,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 // ─── VEHICLE CARD ────────────────────────────────────────────────
 class _VehicleCard extends StatelessWidget {
   final VehicleType vehicle;
-  final bool        isSelected;
+  final bool isSelected;
   final VoidCallback onTap;
-  const _VehicleCard({required this.vehicle, required this.isSelected, required this.onTap});
+  const _VehicleCard(
+      {required this.vehicle, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -611,24 +774,44 @@ class _VehicleCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? kGreenLight : kSurface,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: isSelected ? kGreen : kBorder, width: isSelected ? 2 : 1),
-          boxShadow: isSelected ? [BoxShadow(color: kGreen.withValues(alpha: 0.18), blurRadius: 12, offset: const Offset(0, 4))] : [],
+          border: Border.all(
+              color: isSelected ? kGreen : kBorder, width: isSelected ? 2 : 1),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                      color: kGreen.withValues(alpha: 0.18),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4))
+                ]
+              : [],
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(vehicle.emoji, style: TextStyle(fontSize: 28.sp.clamp(24.0, 32.0))),
+          Text(vehicle.emoji,
+              style: TextStyle(fontSize: 28.sp.clamp(24.0, 32.0))),
           SizedBox(height: 6.h),
-          Text(vehicle.name, style: TextStyle(fontSize: 12.sp.clamp(10.0, 14.0), fontWeight: FontWeight.w700,
-            color: isSelected ? kGreenDark : kTextPrimary)),
+          Text(vehicle.name,
+              style: TextStyle(
+                  fontSize: 12.sp.clamp(10.0, 14.0),
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? kGreenDark : kTextPrimary)),
           SizedBox(height: 2.h),
-          Text(vehicle.baseFare, style: TextStyle(fontSize: 12.sp.clamp(10.0, 14.0), fontWeight: FontWeight.w800,
-            color: isSelected ? kGreen : kTextPrimary)),
+          Text(vehicle.baseFare,
+              style: TextStyle(
+                  fontSize: 12.sp.clamp(10.0, 14.0),
+                  fontWeight: FontWeight.w800,
+                  color: isSelected ? kGreen : kTextPrimary)),
           SizedBox(height: 2.h),
-          Text(vehicle.pricePerKm, style: TextStyle(fontSize: 9.sp.clamp(8.0, 11.0), color: kTextSecondary)),
+          Text(vehicle.pricePerKm,
+              style: TextStyle(
+                  fontSize: 9.sp.clamp(8.0, 11.0), color: kTextSecondary)),
           const Spacer(),
           Row(children: [
-            Icon(Icons.access_time_rounded, size: 9.r.clamp(8.0, 12.0), color: kTextSecondary),
+            Icon(Icons.access_time_rounded,
+                size: 9.r.clamp(8.0, 12.0), color: kTextSecondary),
             SizedBox(width: 2.w),
-            Text('${vehicle.etaMinutes} min', style: TextStyle(fontSize: 9.sp.clamp(8.0, 11.0), color: kTextSecondary)),
+            Text('${vehicle.etaMinutes} min',
+                style: TextStyle(
+                    fontSize: 9.sp.clamp(8.0, 11.0), color: kTextSecondary)),
           ]),
         ]),
       ),
@@ -639,10 +822,14 @@ class _VehicleCard extends StatelessWidget {
 // ─── ROUTE LINE ──────────────────────────────────────────────────
 class _RouteLine extends StatelessWidget {
   final IconData icon;
-  final Color    iconColor;
-  final String   label;
-  final String   value;
-  const _RouteLine({required this.icon, required this.iconColor, required this.label, required this.value});
+  final Color iconColor;
+  final String label;
+  final String value;
+  const _RouteLine(
+      {required this.icon,
+      required this.iconColor,
+      required this.label,
+      required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -651,9 +838,16 @@ class _RouteLine extends StatelessWidget {
       SizedBox(width: 8.w),
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: TextStyle(fontSize: 10.sp.clamp(9.0, 12.0), color: kTextSecondary)),
-          Text(value, style: TextStyle(fontSize: 12.sp.clamp(11.0, 15.0), fontWeight: FontWeight.w600, color: kTextPrimary),
-            maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 10.sp.clamp(9.0, 12.0), color: kTextSecondary)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 12.sp.clamp(11.0, 15.0),
+                  fontWeight: FontWeight.w600,
+                  color: kTextPrimary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
         ]),
       ),
     ]);
@@ -663,21 +857,27 @@ class _RouteLine extends StatelessWidget {
 // ─── INFO CHIP ──────────────────────────────────────────────────
 class _InfoChip extends StatelessWidget {
   final IconData icon;
-  final String   label;
+  final String label;
   const _InfoChip({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-      decoration: BoxDecoration(color: kGreenLight, borderRadius: BorderRadius.circular(20.r)),
+      decoration: BoxDecoration(
+          color: kGreenLight, borderRadius: BorderRadius.circular(20.r)),
       child: Row(
-        mainAxisSize: MainAxisSize.min, // 🔥 FIX: Ye bhi lazmi hai wrap ke andar
-        children: [
-        Icon(icon, size: 12.r.clamp(10.0, 16.0), color: kGreenDark),
-        SizedBox(width: 4.w),
-        Text(label, style: TextStyle(fontSize: 11.sp.clamp(10.0, 14.0), fontWeight: FontWeight.w600, color: kGreenDark)),
-      ]),
+          mainAxisSize:
+              MainAxisSize.min, // 🔥 FIX: Ye bhi lazmi hai wrap ke andar
+          children: [
+            Icon(icon, size: 12.r.clamp(10.0, 16.0), color: kGreenDark),
+            SizedBox(width: 4.w),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 11.sp.clamp(10.0, 14.0),
+                    fontWeight: FontWeight.w600,
+                    color: kGreenDark)),
+          ]),
     );
   }
 }

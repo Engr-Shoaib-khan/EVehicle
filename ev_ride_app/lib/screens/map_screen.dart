@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import '../services/socket_service.dart';
 
 class MapScreen extends StatefulWidget {
-  final String token;   
+  final String token;
   const MapScreen({super.key, required this.token});
 
   @override
@@ -53,13 +53,14 @@ class _MapScreenState extends State<MapScreen> {
       if (permission == LocationPermission.deniedForever) return;
 
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.high),
       );
 
-        setState(() {
-          _currentPos = LatLng(position.latitude, position.longitude);
-          _updateMarker(_currentPos, 'Meri Location');
-        });
+      setState(() {
+        _currentPos = LatLng(position.latitude, position.longitude);
+        _updateMarker(_currentPos, 'Meri Location');
+      });
 
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(_currentPos, 16.0),
@@ -83,7 +84,7 @@ class _MapScreenState extends State<MapScreen> {
   void dispose() {
     _locationSub?.cancel();
     // We don't necessarily want to disconnect the singleton here if other screens use it
-    // _socketService.disconnect(); 
+    // _socketService.disconnect();
     super.dispose();
   }
 

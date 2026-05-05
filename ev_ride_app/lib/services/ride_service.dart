@@ -55,7 +55,8 @@ class RideService {
   }
 
   // ── Update Ride Status (Driver) ────────────────────────────────────
-  Future<Map<String, dynamic>> updateRideStatus(String rideId, String newStatus) async {
+  Future<Map<String, dynamic>> updateRideStatus(
+      String rideId, String newStatus) async {
     try {
       final response = await http.patch(
         Uri.parse('$kBaseUrl/api/rides/$rideId/status'),
@@ -83,7 +84,8 @@ class RideService {
   }
 
   // ── Get Ride History ──────────────────────────────────────────────
-  Future<Map<String, dynamic>> getRideHistory({int page = 1, int limit = 20}) async {
+  Future<Map<String, dynamic>> getRideHistory(
+      {int page = 1, int limit = 20}) async {
     try {
       final response = await http.get(
         Uri.parse('$kBaseUrl/api/rides/history/me?page=$page&limit=$limit'),

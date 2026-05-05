@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
 import '../models/ride_state.dart';
@@ -85,7 +82,9 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
   void dispose() {
     _pulseCtrl.dispose();
     SocketService.instance.leaveRideRoom(widget.rideId);
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) {
+      s.cancel();
+    }
     _mapCtrl?.dispose();
     super.dispose();
   }
@@ -99,12 +98,16 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
     _placeDriverMarker(ll);
     _mapCtrl?.animateCamera(CameraUpdate.newLatLng(ll));
     final soc = d['batterySoc'];
-    if (soc != null) setState(() => _soc = (soc as num).toDouble());
+    if (soc != null) {
+      setState(() => _soc = (soc as num).toDouble());
+    }
   }
 
   void _onBattery(Map<String, dynamic> d) {
     final soc = d['soc'];
-    if (soc != null && mounted) setState(() => _soc = (soc as num).toDouble());
+    if (soc != null && mounted) {
+      setState(() => _soc = (soc as num).toDouble());
+    }
   }
 
   void _onStatus(Map<String, dynamic> d) {
@@ -272,10 +275,11 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
         // ── MAP ────────────────────────────────────────────────
         GoogleMap(
           initialCameraPosition: CameraPosition(target: initial, zoom: 15.0),
+          style: _kStyle,
           markers: _markers, polylines: _polylines,
           myLocationEnabled: true, myLocationButtonEnabled: false,
           zoomControlsEnabled: false, mapToolbarEnabled: false,
-          onMapCreated: (ctrl) { _mapCtrl = ctrl; ctrl.setMapStyle(_kStyle); },
+          onMapCreated: (ctrl) { _mapCtrl = ctrl; },
         ),
 
         // ── BOTTOM CARD ────────────────────────────────────────
@@ -288,7 +292,7 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
                 margin: const EdgeInsets.all(14.0),
                 decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(24.0),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.13), blurRadius: 24.0, offset: const Offset(0, -4))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.13), blurRadius: 24.0, offset: const Offset(0, -4))],
                 ),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
 
@@ -416,7 +420,7 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
                             width: 52.0, height: 52.0,
                             decoration: BoxDecoration(
                               color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(14.0),
-                              border: Border.all(color: const Color(0xFFEF4444).withOpacity(0.4)),
+                              border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
                             ),
                             child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                               Icon(Icons.sos_rounded, color: Color(0xFFEF4444), size: 20.0),

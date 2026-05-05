@@ -77,12 +77,12 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
     );
   }
 
-  Widget _buildEmpty() => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-    const Text('🚗', style: TextStyle(fontSize: 48.0)),
-    const SizedBox(height: 14.0),
-    const Text('No Rides Yet', style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w700, color: Color(0xFF0D1B2A))),
-    const SizedBox(height: 6.0),
-    const Text('Your completed and cancelled rides\nwill appear here.', textAlign: TextAlign.center,
+  Widget _buildEmpty() => const Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+    Text('🚗', style: TextStyle(fontSize: 48.0)),
+    SizedBox(height: 14.0),
+    Text('No Rides Yet', style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w700, color: Color(0xFF0D1B2A))),
+    SizedBox(height: 6.0),
+    Text('Your completed and cancelled rides\nwill appear here.', textAlign: TextAlign.center,
         style: TextStyle(fontSize: 13.0, color: Color(0xFF6B7280), height: 1.5)),
   ]));
 
@@ -123,7 +123,7 @@ class _RideTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(18.0),
           border: Border.all(color: const Color(0xFFE5E7EB)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8.0, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8.0, offset: const Offset(0, 2))],
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Header row

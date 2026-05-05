@@ -13,7 +13,7 @@ class PulsePainter extends CustomPainter {
       final double radius = size.width / 2 * ((animationValue + i / 3).remainder(1.0));
       
       final Paint paint = Paint()
-        ..color = kGreen.withOpacity(opacity * 0.4)
+        ..color = kGreen.withValues(alpha: opacity * 0.4)
         ..style = PaintingStyle.fill;
         
       canvas.drawCircle(Offset(size.width / 2, size.height / 2), radius, paint);

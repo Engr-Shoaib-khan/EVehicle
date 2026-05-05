@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final _authService     = AuthService();
 
   GoogleMapController? _mapController;
-  Position? _currentPosition;
   LatLng?   _pickupLatLng;
   LatLng?   _dropoffLatLng;
   String    _pickupAddress  = 'Fetching location...';
@@ -54,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Map<String, dynamic>? _user;
   _SheetPhase _phase = _SheetPhase.selectVehicle;
   int  _selectedVehicleIndex = 0;
-  String _selectedPaymentMethod = 'cash';
+  final String _selectedPaymentMethod = 'cash';
   bool _isLoading = false;
 
   late final AnimationController _sheetAnim;
@@ -91,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       final addr = await _locationService.getAddressFromCoords(pos.latitude, pos.longitude);
       if (!mounted) return;
       setState(() {
-        _currentPosition = pos;
         _pickupLatLng    = LatLng(pos.latitude, pos.longitude);
         _pickupAddress   = addr;
       });
@@ -285,13 +282,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       initialCameraPosition: CameraPosition(target: initialTarget, zoom: 14),
       markers: _markers,
       polylines: _polylines,
+      style: _kMapStyle,
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
       onMapCreated: (ctrl) {
         _mapController = ctrl;
-        ctrl.setMapStyle(_kMapStyle);
         if (_pickupLatLng != null) {
           ctrl.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(target: _pickupLatLng!, zoom: 15.5)));
@@ -308,8 +305,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Container(
           padding: EdgeInsets.fromLTRB(20.w, 52.h.clamp(40.0, 70.0), 20.w, 14.h),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.82),
-            border: Border(bottom: BorderSide(color: kBorder.withOpacity(0.5))),
+            color: Colors.white.withValues(alpha: 0.82),
+            border: Border(bottom: BorderSide(color: kBorder.withValues(alpha: 0.5))),
           ),
           child: Row(children: [
             Container(
@@ -371,10 +368,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.85),
+              color: Colors.white.withValues(alpha: 0.85),
               borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: kBorder.withOpacity(0.6)),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 4))],
+              border: Border.all(color: kBorder.withValues(alpha: 0.6)),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, 4))],
             ),
             child: Icon(Icons.my_location_rounded, color: kGreen, size: 22.r.clamp(20.0, 26.0)),
           ),
@@ -390,9 +387,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.94),
+            color: Colors.white.withValues(alpha: 0.94),
             borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 32, offset: const Offset(0, -4))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 32, offset: const Offset(0, -4))],
           ),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             SizedBox(height: 12.h),
@@ -487,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               maxLines: 1, overflow: TextOverflow.ellipsis)),
           ]),
         ),
-        Divider(height: 1, color: kBorder),
+        const Divider(height: 1, color: kBorder),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 4.h),
           child: Row(children: [
@@ -615,7 +612,7 @@ class _VehicleCard extends StatelessWidget {
           color: isSelected ? kGreenLight : kSurface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: isSelected ? kGreen : kBorder, width: isSelected ? 2 : 1),
-          boxShadow: isSelected ? [BoxShadow(color: kGreen.withOpacity(0.18), blurRadius: 12, offset: const Offset(0, 4))] : [],
+          boxShadow: isSelected ? [BoxShadow(color: kGreen.withValues(alpha: 0.18), blurRadius: 12, offset: const Offset(0, 4))] : [],
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(vehicle.emoji, style: TextStyle(fontSize: 28.sp.clamp(24.0, 32.0))),

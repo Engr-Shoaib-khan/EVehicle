@@ -161,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: BoxDecoration(
                       color: kGreenLight,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: kGreen.withOpacity(0.3)),
+                      border: Border.all(color: kGreen.withValues(alpha: 0.3)),
                     ),
                     child: const Row(
                       children: [
@@ -273,7 +273,7 @@ class _RoleOption extends StatelessWidget {
             color: isSelected ? kGreen : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             boxShadow: isSelected
-                ? [BoxShadow(color: kGreen.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]
+                ? [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))]
                 : [],
           ),
           child: Center(

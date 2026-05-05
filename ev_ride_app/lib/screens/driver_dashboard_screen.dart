@@ -38,8 +38,8 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
   Position? _currentPosition;
 
   // ── Stats (mock for now, wire to GET /api/drivers/me/stats) ─
-  int    _todayRides    = 0;
-  double _todayEarnings = 0.0;
+  final int    _todayRides    = 0;
+  final double _todayEarnings = 0.0;
   double _rating        = 0.0;
 
   // ── Active ride request (from socket) ────────────────────────
@@ -141,6 +141,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
     await SocketService.instance.connect();
     if (!mounted) return;
 
+    _subs.add(SocketService.instance.onNewRideRequest.listen(_onNewRideRequest));
     _subs.add(SocketService.instance.onRideTaken.listen((_) {
         // Another driver accepted — dismiss pending request silently
         if (mounted && _pendingRequest != null) _dismissRequest(accepted: false, silent: true);
@@ -153,8 +154,12 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
     try {
       if (!_isOnline) {
         // Going online — need fresh GPS coords
-        final pos = _currentPosition ??
-            await _locationSvc.getCurrentPosition().catchError((_) => null);
+        Position? pos;
+        try {
+          pos = _currentPosition ?? await _locationSvc.getCurrentPosition();
+        } catch (_) {
+          pos = null;
+        }
 
         final coords = pos != null
             ? [pos.longitude, pos.latitude]
@@ -389,7 +394,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
           decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(12.0),
             border: Border.all(color: const Color(0xFFE5E7EB)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6.0)],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6.0)],
           ),
           child: const Icon(Icons.logout_rounded, size: 18.0, color: Color(0xFF6B7280)),
         ),
@@ -409,12 +414,12 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
         gradient: _isOnline
             ? const LinearGradient(colors: [kGreen, kGreenDark],
                 begin: Alignment.topLeft, end: Alignment.bottomRight)
-            : LinearGradient(colors: [const Color(0xFFF3F4F6), const Color(0xFFE5E7EB)],
+            : const LinearGradient(colors: [Color(0xFFF3F4F6), Color(0xFFE5E7EB)],
                 begin: Alignment.topLeft, end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(22.0),
         boxShadow: [
           BoxShadow(
-            color: _isOnline ? kGreen.withOpacity(0.35) : Colors.black.withOpacity(0.06),
+            color: _isOnline ? kGreen.withValues(alpha: 0.35) : Colors.black.withValues(alpha: 0.06),
             blurRadius: 20.0, offset: const Offset(0, 8),
           ),
         ],
@@ -433,11 +438,11 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
               width: 90.0, height: 90.0,
               decoration: BoxDecoration(
                 color: _isOnline
-                    ? Colors.white.withOpacity(0.2)
+                    ? Colors.white.withValues(alpha: 0.2)
                     : const Color(0xFFE5E7EB),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: _isOnline ? Colors.white.withOpacity(0.5) : const Color(0xFFD1D5DB),
+                  color: _isOnline ? Colors.white.withValues(alpha: 0.5) : const Color(0xFFD1D5DB),
                   width: 3.0,
                 ),
               ),
@@ -481,7 +486,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
               : 'You will not receive any ride requests',
           style: TextStyle(
             fontSize: 12.0,
-            color: _isOnline ? Colors.white.withOpacity(0.75) : const Color(0xFF9CA3AF),
+            color: _isOnline ? Colors.white.withValues(alpha: 0.75) : const Color(0xFF9CA3AF),
           ),
         ),
       ]),
@@ -522,7 +527,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
       decoration: BoxDecoration(
         color: Colors.white, borderRadius: BorderRadius.circular(18.0),
         border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10.0, offset: const Offset(0, 3))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10.0, offset: const Offset(0, 3))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Header
@@ -530,24 +535,24 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
           Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: _batteryColor.withOpacity(0.12),
+              color: _batteryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Icon(Icons.battery_charging_full_rounded, color: _batteryColor, size: 20.0),
           ),
           const SizedBox(width: 10.0),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Battery SOC Simulator',
+          const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Battery SOC Simulator',
                 style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w700, color: Color(0xFF0D1B2A))),
             Text('Emits live socket event to rider',
-                style: TextStyle(fontSize: 11.0, color: const Color(0xFF6B7280))),
+                style: TextStyle(fontSize: 11.0, color: Color(0xFF6B7280))),
           ]),
           const Spacer(),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
             decoration: BoxDecoration(
-              color: _batteryColor.withOpacity(0.12),
+              color: _batteryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: Text(
@@ -578,7 +583,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
             thumbColor: _batteryColor,
             activeTrackColor: _batteryColor,
             inactiveTrackColor: const Color(0xFFF3F4F6),
-            overlayColor: _batteryColor.withOpacity(0.12),
+            overlayColor: _batteryColor.withValues(alpha: 0.12),
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
             trackHeight: 4.0,
           ),
@@ -611,7 +616,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             decoration: BoxDecoration(
               color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(color: const Color(0xFFEF4444).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
             ),
             child: const Row(children: [
               Icon(Icons.warning_rounded, color: Color(0xFFEF4444), size: 14.0),
@@ -636,7 +641,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
       decoration: BoxDecoration(
         color: Colors.white, borderRadius: BorderRadius.circular(16.0),
         border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8.0, offset: const Offset(0,2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8.0, offset: const Offset(0,2))],
       ),
       child: Row(children: [
         Container(
@@ -676,15 +681,15 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: kGreenLight, borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: kGreen.withOpacity(0.2)),
+        border: Border.all(color: kGreen.withValues(alpha: 0.2)),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(children: [
+      child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
           Icon(Icons.lightbulb_outline_rounded, color: kGreenDark, size: 16.0),
           SizedBox(width: 6.0),
           Text('Driver Tips', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w700, color: kGreenDark)),
         ]),
-        const SizedBox(height: 10.0),
+        SizedBox(height: 10.0),
         _Tip(text: 'Go online only when you are ready to drive and in a busy area.'),
         _Tip(text: 'Keep battery above 20% before starting a long trip.'),
         _Tip(text: 'Female rider requests will be sent to you if no female drivers are available.'),
@@ -715,7 +720,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28.0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.18), blurRadius: 32.0, offset: const Offset(0, -6)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.18), blurRadius: 32.0, offset: const Offset(0, -6)),
         ],
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -884,7 +889,7 @@ class _StatCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(16.0),
       border: Border.all(color: const Color(0xFFE5E7EB)),
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8.0, offset: const Offset(0,2))],
+      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8.0, offset: const Offset(0,2))],
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
@@ -910,8 +915,8 @@ class _BatteryPreset extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(color: color.withOpacity(0.3)),
+        color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20.0),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(label, style: TextStyle(fontSize: 11.0, fontWeight: FontWeight.w700, color: color)),
     ),

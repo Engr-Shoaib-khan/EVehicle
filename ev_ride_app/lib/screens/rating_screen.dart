@@ -52,7 +52,7 @@ class _RatingScreenState extends State<RatingScreen> {
             const SizedBox(height: 20),
             CircleAvatar(
               radius: 40,
-              backgroundColor: kGreen.withOpacity(0.1),
+              backgroundColor: kGreen.withValues(alpha: 0.1),
               child: const Icon(Icons.person, size: 40, color: kGreen),
             ),
             const SizedBox(height: 16),

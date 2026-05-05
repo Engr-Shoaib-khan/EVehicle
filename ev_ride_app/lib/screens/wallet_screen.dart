@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 import '../services/payment_service.dart';
 
@@ -19,10 +17,8 @@ class _WalletScreenState extends State<WalletScreen>
   bool     _loadingWallet = true;
   bool     _topUpLoading  = false;
   List<dynamic> _txns    = [];
-  String?  _walletError;
 
   String   _selectedMethod = 'card';
-  double?  _customAmount;
   final _customCtrl = TextEditingController();
 
   static const List<int>    _presets = [200, 500, 1000, 2000, 5000];
@@ -48,7 +44,7 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Future<void> _fetchWallet() async {
-    setState(() { _loadingWallet = true; _walletError = null; });
+    setState(() { _loadingWallet = true; });
     try {
       final result = await _paymentService.getWalletDetails();
 
@@ -63,13 +59,13 @@ class _WalletScreenState extends State<WalletScreen>
           setState(() => _txns = (txnResult['data'] as List? ?? []));
         }
       } else {
-        setState(() => _walletError = result['message'] ?? 'Failed to load wallet.');
+        // Handle error if needed
       }
-    } catch (_) {
-      setState(() => _walletError = 'Connection error.');
-    } finally {
+      } catch (e) {
+      // Handle exception if needed
+      } finally {
       if (mounted) setState(() => _loadingWallet = false);
-    }
+      }
   }
 
   Future<void> _topUp(int amount) async {
@@ -80,7 +76,6 @@ class _WalletScreenState extends State<WalletScreen>
       if (result['success'] == true) {
         _showSnack('Rs. $amount added to wallet!', isSuccess: true);
         _customCtrl.clear();
-        _customAmount = null;
         await _fetchWallet();
       } else {
         _showSnack(result['message'] ?? 'Top-up failed.', isSuccess: false);
@@ -218,9 +213,9 @@ class _WalletScreenState extends State<WalletScreen>
       width: double.infinity,
       padding: const EdgeInsets.all(25.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [kGreen, kGreen.withOpacity(0.8)]),
+        gradient: LinearGradient(colors: [kGreen, kGreen.withValues(alpha: 0.8)]),
         borderRadius: BorderRadius.circular(25.0),
-        boxShadow: [BoxShadow(color: kGreen.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))],
+        boxShadow: [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,7 +282,7 @@ class _WalletScreenState extends State<WalletScreen>
             decoration: BoxDecoration(
               border: Border.all(color: isSelected ? kGreen : Colors.grey.shade200, width: 2),
               borderRadius: BorderRadius.circular(15.0),
-              color: isSelected ? kGreen.withOpacity(0.05) : Colors.transparent,
+              color: isSelected ? kGreen.withValues(alpha: 0.05) : Colors.transparent,
             ),
             child: Row(
               children: [
@@ -326,7 +321,7 @@ class _WalletScreenState extends State<WalletScreen>
               Container(
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: isCredit ? kGreen.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                  color: isCredit ? kGreen.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

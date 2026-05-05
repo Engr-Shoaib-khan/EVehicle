@@ -50,16 +50,16 @@ class ReceiptScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(colors: [kGreen, kGreenDark], begin: Alignment.topLeft, end: Alignment.bottomRight),
                   borderRadius: BorderRadius.circular(20.0),
-                  boxShadow: [BoxShadow(color: kGreen.withOpacity(0.3), blurRadius: 18.0, offset: const Offset(0,6))],
+                  boxShadow: [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 18.0, offset: const Offset(0,6))],
                 ),
                 child: Column(children: [
                   const Icon(Icons.receipt_long_rounded, color: Colors.white, size: 36.0),
                   const SizedBox(height: 10.0),
                   Text('Rs. $total', style: const TextStyle(color: Colors.white, fontSize: 32.0, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
                   const SizedBox(height: 4.0),
-                  Text('Paid via ${payment.toUpperCase()}', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12.0)),
+                  Text('Paid via ${payment.toUpperCase()}', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12.0)),
                   const SizedBox(height: 4.0),
-                  Text(dateStr, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11.0)),
+                  Text(dateStr, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11.0)),
                 ]),
               ),
 
@@ -134,7 +134,7 @@ class ReceiptScreen extends StatelessWidget {
     width: double.infinity, padding: const EdgeInsets.all(16.0),
     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16.0),
         border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8.0, offset: const Offset(0,2))]),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8.0, offset: const Offset(0,2))]),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
   );
 

@@ -152,7 +152,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     color: kTextPrimary),
                 boxShadows: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 6,
                       offset: const Offset(0, 2))
                 ],
@@ -203,7 +203,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 'Code expires in 10 minutes.',
                 style: TextStyle(
                     fontSize: 12,
-                    color: kTextSecondary.withOpacity(0.7)),
+                    color: kTextSecondary.withValues(alpha: 0.7)),
               ),
             ],
           ),

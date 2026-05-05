@@ -147,10 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 16),
 
-                Row(children: [
+                const Row(children: [
                   Expanded(child: Divider(color: kBorder, thickness: 1)),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text('or',
                         style: TextStyle(color: kTextSecondary, fontSize: 13)),
                   ),

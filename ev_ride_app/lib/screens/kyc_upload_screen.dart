@@ -105,7 +105,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                     // Info banner
                     Container(
                       padding: const EdgeInsets.all(14.0),
-                      decoration: BoxDecoration(color: kGreenLight, borderRadius: BorderRadius.circular(14.0), border: Border.all(color: kGreen.withOpacity(0.3))),
+                      decoration: BoxDecoration(color: kGreenLight, borderRadius: BorderRadius.circular(14.0), border: Border.all(color: kGreen.withValues(alpha: 0.3))),
                       child: const Row(children: [
                         Icon(Icons.verified_user_outlined, color: kGreenDark, size: 18.0),
                         SizedBox(width: 10.0),
@@ -177,7 +177,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
         Container(
           width: 80.0, height: 80.0,
           decoration: BoxDecoration(gradient: const LinearGradient(colors: [kGreen, kGreenDark]), shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: kGreen.withOpacity(0.3), blurRadius: 20.0, offset: const Offset(0,6))]),
+              boxShadow: [BoxShadow(color: kGreen.withValues(alpha: 0.3), blurRadius: 20.0, offset: const Offset(0,6))]),
           child: const Icon(Icons.check_rounded, color: Colors.white, size: 40.0),
         ),
         const SizedBox(height: 20.0),
@@ -225,12 +225,12 @@ class _DocUploadTile extends StatelessWidget {
           color: uploaded ? kGreenLight : Colors.white,
           borderRadius: BorderRadius.circular(14.0),
           border: Border.all(color: uploaded ? kGreen : const Color(0xFFE5E7EB), width: uploaded ? 1.8 : 1.0),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6.0)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6.0)],
         ),
         child: Row(children: [
           Container(
             width: 44.0, height: 44.0,
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12.0)),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12.0)),
             child: uploaded
                 ? ClipRRect(borderRadius: BorderRadius.circular(12.0),
                     child: Image.file(file!, fit: BoxFit.cover, width: 44.0, height: 44.0))

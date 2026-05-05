@@ -193,8 +193,9 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Widget _buildTopUpTab() {
-    if (_loadingWallet)
+    if (_loadingWallet) {
       return const Center(child: CircularProgressIndicator(color: kGreen));
+    }
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -347,9 +348,12 @@ class _WalletScreenState extends State<WalletScreen>
   }
 
   Widget _buildTransactionsTab() {
-    if (_loadingWallet)
+    if (_loadingWallet) {
       return const Center(child: CircularProgressIndicator(color: kGreen));
-    if (_txns.isEmpty) return const Center(child: Text('No transactions yet.'));
+    }
+    if (_txns.isEmpty) {
+      return const Center(child: Text('No transactions yet.'));
+    }
 
     return ListView.builder(
       itemCount: _txns.length,

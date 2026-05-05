@@ -139,13 +139,16 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
       final pos = await _locationSvc.getCurrentPosition();
       final addr =
           await _locationSvc.getAddressFromCoords(pos.latitude, pos.longitude);
-      if (mounted)
+      if (mounted) {
         setState(() {
           _currentPosition = pos;
           _currentAddress = addr;
         });
+      }
     } catch (_) {
-      if (mounted) setState(() => _currentAddress = 'Location unavailable');
+      if (mounted) {
+        setState(() => _currentAddress = 'Location unavailable');
+      }
     }
   }
 
@@ -158,8 +161,9 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen>
         .add(SocketService.instance.onNewRideRequest.listen(_onNewRideRequest));
     _subs.add(SocketService.instance.onRideTaken.listen((_) {
       // Another driver accepted — dismiss pending request silently
-      if (mounted && _pendingRequest != null)
+      if (mounted && _pendingRequest != null) {
         _dismissRequest(accepted: false, silent: true);
+      }
     }));
   }
 

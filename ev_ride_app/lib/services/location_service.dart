@@ -32,8 +32,9 @@ class LocationService {
 
   /// Latitude/Longitude ko address mein badalna (Web safe)
   Future<String> getAddressFromCoords(double lat, double lng) async {
-    if (kIsWeb)
+    if (kIsWeb) {
       return "Saddar, Karachi (Web Preview)"; // Chrome par geocoding nahi chalti
+    }
 
     try {
       final placemarks = await placemarkFromCoordinates(lat, lng);

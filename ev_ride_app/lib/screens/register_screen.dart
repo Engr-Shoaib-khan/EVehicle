@@ -123,8 +123,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Email is required';
-                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(v))
+                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(v)) {
                       return 'Enter a valid email';
+                    }
                     return null;
                   },
                 ),
@@ -149,8 +150,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   validator: (v) {
-                    if (v == null || v.isEmpty)
+                    if (v == null || v.isEmpty) {
                       return 'Phone number is required';
+                    }
                     if (!RegExp(r'^(\+92|0)3[0-9]{9}$').hasMatch(v)) {
                       return 'Enter a valid Pakistani mobile number';
                     }

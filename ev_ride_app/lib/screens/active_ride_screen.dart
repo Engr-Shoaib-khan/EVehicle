@@ -117,12 +117,15 @@ class _ActiveRideScreenState extends State<ActiveRideScreen>
     if (!mounted) return;
     setState(() => _statusMsg = d['message'] as String? ?? status);
     if (status == 'completed' && !widget.isDriverMode) _goToRating();
-    if (status == 'driver_arrived')
+    if (status == 'driver_arrived') {
       setState(() => _driverStep = _DriverStep.arrived);
-    if (status == 'in_progress')
+    }
+    if (status == 'in_progress') {
       setState(() => _driverStep = _DriverStep.inProgress);
-    if (status == 'completed')
+    }
+    if (status == 'completed') {
       setState(() => _driverStep = _DriverStep.completed);
+    }
   }
 
   void _onSos(Map<String, dynamic> d) {

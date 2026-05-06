@@ -4,6 +4,93 @@ const User = require("../models/User");
 const { AppError } = require("../middleware/errorHandler");
 const logger = require("../utils/logger");
 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+exports.createCheckoutSession = async (req, res, next) => {
+  try {
+    const { amount } = req.body;
+    if (!amount || amount < 100) return next(new AppError("Minimum top-up is Rs. 100", 400));
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "pkr",
+            product_data: {
+              name: "Wallet Top-up",
+              description: "EV Ride App Wallet Credit",
+            },
+            unit_amount: amount * 100, // Stripe expects amount in cents/paisa
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL}/payment-cancelled`,
+      customer_email: req.user.email,
+      metadata: {
+        userId: req.user._id.toString(),
+        type: "wallet_topup",
+      },
+    });
+
+    res.status(200).json({ success: true, url: session.url, sessionId: session.id });
+  } catch (err) {
+    logger.error("Stripe Checkout Error:", err);
+    next(err);
+  }
+};
+
+exports.handleStripeWebhook = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    logger.error(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    if (session.metadata.type === "wallet_topup") {
+      const userId = session.metadata.userId;
+      const amount = session.amount_total / 100;
+
+      try {
+        const user = await User.findById(userId);
+        if (user) {
+          if (!user.wallet) user.wallet = { balance: 0, transactions: [] };
+          user.wallet.balance += amount;
+          user.wallet.transactions.push({
+            type: "credit",
+            amount,
+            description: "Stripe Wallet Top-up",
+            date: new Date(),
+            reference: session.id
+          });
+          await user.save();
+          logger.info(`Wallet topped up for user ${userId}: ${amount} PKR`);
+        }
+      } catch (err) {
+        logger.error(`Error updating wallet for user ${userId}:`, err);
+        return res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  }
+
+  res.json({ received: true });
+};
+
 exports.getPaymentHistory = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1"));

@@ -26,7 +26,22 @@ class PaymentService {
     }
   }
 
-  // ── Top Up Wallet ──────────────────────────────────────────────────
+  // ── Create Stripe Checkout Session ────────────────────────────────
+  Future<Map<String, dynamic>> createStripeCheckoutSession(
+      double amount) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$kBaseUrl/api/payments/wallet/topup-session'),
+        headers: await _getHeaders(),
+        body: jsonEncode({'amount': amount}),
+      );
+      return jsonDecode(response.body);
+    } catch (e) {
+      return {'success': false, 'message': 'Connection error: $e'};
+    }
+  }
+
+  // ── Top Up Wallet (Manual/Internal) ───────────────────────────────
   Future<Map<String, dynamic>> topUpWallet(double amount) async {
     try {
       final response = await http.post(

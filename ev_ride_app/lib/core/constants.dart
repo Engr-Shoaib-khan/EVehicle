@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // ── API ───────────────────────────────────────────────────────────
+const String kGoogleMapsKey = 'AIzaSyB310rALOQf_y3ZLjCEj2YJ78uZPwsxp-E';
+
 // Use your machine's local IP for physical devices.
 const String _myIP = '192.168.1.5';
 final String kBaseUrl = kIsWeb

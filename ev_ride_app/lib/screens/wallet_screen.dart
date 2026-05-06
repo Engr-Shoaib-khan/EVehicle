@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../core/constants.dart';
 import '../services/payment_service.dart';
 
@@ -73,17 +74,37 @@ class _WalletScreenState extends State<WalletScreen>
   Future<void> _topUp(int amount) async {
     setState(() => _topUpLoading = true);
     try {
-      final result = await _paymentService.topUpWallet(amount.toDouble());
+      Map<String, dynamic> result;
 
-      if (result['success'] == true) {
-        _showSnack('Rs. $amount added to wallet!', isSuccess: true);
-        _customCtrl.clear();
-        await _fetchWallet();
+      if (_selectedMethod == 'card') {
+        // Stripe Checkout
+        result = await _paymentService
+            .createStripeCheckoutSession(amount.toDouble());
+        if (result['success'] == true && result['url'] != null) {
+          final url = Uri.parse(result['url']);
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+            _showSnack('Opening payment gateway...', isSuccess: true);
+          } else {
+            _showSnack('Could not open payment page.', isSuccess: false);
+          }
+        } else {
+          _showSnack(result['message'] ?? 'Failed to start payment.',
+              isSuccess: false);
+        }
       } else {
-        _showSnack(result['message'] ?? 'Top-up failed.', isSuccess: false);
+        // Other methods (Internal/Manual for now)
+        result = await _paymentService.topUpWallet(amount.toDouble());
+        if (result['success'] == true) {
+          _showSnack('Rs. $amount added to wallet!', isSuccess: true);
+          _customCtrl.clear();
+          await _fetchWallet();
+        } else {
+          _showSnack(result['message'] ?? 'Top-up failed.', isSuccess: false);
+        }
       }
-    } catch (_) {
-      _showSnack('Connection error. Please try again.', isSuccess: false);
+    } catch (e) {
+      _showSnack('An error occurred: $e', isSuccess: false);
     } finally {
       if (mounted) setState(() => _topUpLoading = false);
     }

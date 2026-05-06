@@ -27,11 +27,17 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        
+
         // Multidex enable kiya gaya hai
         multiDexEnabled = true
-    }
 
+        val localProperties = java.util.Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(localPropertiesFile.inputStream())
+        }
+        manifestPlaceholders["googleMapsKey"] = localProperties.getProperty("googleMapsKey") ?: ""
+    }
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")

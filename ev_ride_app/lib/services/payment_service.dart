@@ -27,7 +27,8 @@ class PaymentService {
   }
 
   // ── Create Stripe Checkout Session ────────────────────────────────
-  Future<Map<String, dynamic>> createStripeCheckoutSession(double amount) async {
+  Future<Map<String, dynamic>> createStripeCheckoutSession(
+      double amount) async {
     try {
       final response = await http.post(
         Uri.parse('$kBaseUrl/api/payments/wallet/topup-session'),

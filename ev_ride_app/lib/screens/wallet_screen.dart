@@ -78,7 +78,8 @@ class _WalletScreenState extends State<WalletScreen>
 
       if (_selectedMethod == 'card') {
         // Stripe Checkout
-        result = await _paymentService.createStripeCheckoutSession(amount.toDouble());
+        result = await _paymentService
+            .createStripeCheckoutSession(amount.toDouble());
         if (result['success'] == true && result['url'] != null) {
           final url = Uri.parse(result['url']);
           if (await canLaunchUrl(url)) {
@@ -88,7 +89,8 @@ class _WalletScreenState extends State<WalletScreen>
             _showSnack('Could not open payment page.', isSuccess: false);
           }
         } else {
-          _showSnack(result['message'] ?? 'Failed to start payment.', isSuccess: false);
+          _showSnack(result['message'] ?? 'Failed to start payment.',
+              isSuccess: false);
         }
       } else {
         // Other methods (Internal/Manual for now)

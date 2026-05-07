@@ -49,4 +49,4 @@ jobs:
           context: ./backend
           file: backend/Dockerfile
           push: true
-          tags: ghcr.io/engr-shoaib-khan/evehicle/backend:latest
+          tags: ghcr.io/engr-shoaib-khan/ev-backend:latest

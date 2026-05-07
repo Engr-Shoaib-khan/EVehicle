@@ -46,7 +46,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
           file: backend/Dockerfile
           push: true
           tags: ghcr.io/engr-shoaib-khan/evehicle/backend:latest
